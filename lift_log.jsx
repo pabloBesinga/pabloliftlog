@@ -170,15 +170,55 @@ export default function LiftLog() {
     }
   };
 
+  const [draftReady, setDraftReady] = useState(false);
+  const draftSaveTimer = useRef(null);
+
+  // Load any in-progress draft for this day (survives the app being closed),
+  // falling back to empty rows if nothing was saved yet.
   useEffect(() => {
-    const init = {};
-    DAYS[day].exercises.forEach((e) => {
-      init[e.name] = [emptySetRow()];
-    });
-    setEntries(init);
-    setOpenEx(new Set(DAYS[day].exercises.map((e) => e.name)));
-    setSaved(false);
+    let cancelled = false;
+    setDraftReady(false);
+    (async () => {
+      let initial = {};
+      DAYS[day].exercises.forEach((e) => {
+        initial[e.name] = [emptySetRow()];
+      });
+      try {
+        const res = await window.storage.get(`draft:${day}`, false);
+        if (res && res.value) {
+          const parsed = JSON.parse(res.value);
+          DAYS[day].exercises.forEach((e) => {
+            if (!parsed[e.name]) parsed[e.name] = [emptySetRow()];
+          });
+          initial = parsed;
+        }
+      } catch (e) {
+        // no draft saved yet for this day — use the empty defaults
+      }
+      if (!cancelled) {
+        setEntries(initial);
+        setOpenEx(new Set(DAYS[day].exercises.map((e) => e.name)));
+        setSaved(false);
+        setDraftReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [day]);
+
+  // Auto-save in-progress entries as a draft (debounced) so nothing is lost
+  // if the app is closed before you hit "Save workout".
+  useEffect(() => {
+    if (!draftReady) return;
+    if (draftSaveTimer.current) clearTimeout(draftSaveTimer.current);
+    draftSaveTimer.current = setTimeout(() => {
+      window.storage.set(`draft:${day}`, JSON.stringify(entries), false).catch(() => {});
+    }, 400);
+    return () => {
+      if (draftSaveTimer.current) clearTimeout(draftSaveTimer.current);
+    };
+  }, [entries, day, draftReady]);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
@@ -313,6 +353,14 @@ export default function LiftLog() {
       });
       await window.storage.set("last-values", JSON.stringify(newLastValues), false);
       setLastValues(newLastValues);
+
+      // Workout is safely saved — clear today's draft and reset the form.
+      await window.storage.delete(`draft:${day}`, false).catch(() => {});
+      const freshEntries = {};
+      DAYS[day].exercises.forEach((e) => {
+        freshEntries[e.name] = [emptySetRow()];
+      });
+      setEntries(freshEntries);
 
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
