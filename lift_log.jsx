@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Plus,
   Trash2,
@@ -116,6 +116,59 @@ export default function LiftLog() {
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [archiveMsg, setArchiveMsg] = useState("");
+  const [restoring, setRestoring] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const exportBackup = async () => {
+    setError("");
+    try {
+      const listRes = await window.storage.list("", false);
+      const keys = listRes ? listRes.keys : [];
+      const data = {};
+      for (const k of keys) {
+        try {
+          const res = await window.storage.get(k, false);
+          data[k] = res.value;
+        } catch (e) {
+          // skip unreadable key
+        }
+      }
+      const payload = { exportedAt: new Date().toISOString(), data };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `lift-log-backup-${todayISO()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError("Couldn't create a backup file. Try again.");
+    }
+  };
+
+  const importBackup = async (file) => {
+    setRestoring(true);
+    setError("");
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const data = parsed && parsed.data ? parsed.data : parsed;
+      const entriesToWrite = Object.entries(data || {});
+      if (entriesToWrite.length === 0) throw new Error("empty backup");
+      for (const [k, v] of entriesToWrite) {
+        await window.storage.set(k, v, false);
+      }
+      await loadAll();
+      setArchiveMsg("Backup restored successfully.");
+      setTimeout(() => setArchiveMsg(""), 4000);
+    } catch (e) {
+      setError("Couldn't restore that file — make sure it's a Lift Log backup.");
+    } finally {
+      setRestoring(false);
+    }
+  };
 
   useEffect(() => {
     const init = {};
@@ -769,6 +822,56 @@ export default function LiftLog() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Backup & restore — protects against iOS clearing home-screen app storage */}
+          <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>Backup your data</div>
+            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5, marginBottom: 12 }}>
+              iPhone can occasionally clear storage for home-screen apps like this one that aren't backed by a server.
+              Export a backup file after archiving each week, and you can always restore it if that happens.
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={exportBackup}
+                style={{
+                  background: C.amberSoft,
+                  color: C.amber,
+                  fontWeight: 700,
+                  fontSize: 12.5,
+                  borderRadius: 8,
+                  padding: "9px 14px",
+                }}
+              >
+                Export backup
+              </button>
+              <button
+                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                disabled={restoring}
+                style={{
+                  border: `1px solid ${C.cardBorder}`,
+                  color: C.text,
+                  fontWeight: 700,
+                  fontSize: 12.5,
+                  borderRadius: 8,
+                  padding: "9px 14px",
+                  opacity: restoring ? 0.6 : 1,
+                }}
+              >
+                {restoring ? "Restoring…" : "Restore from file"}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  const file = e.target.files && e.target.files[0];
+                  if (file) importBackup(file);
+                  e.target.value = "";
+                }}
+              />
             </div>
           </div>
         </div>
