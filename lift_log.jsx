@@ -28,44 +28,44 @@ const C = {
 
 const DAYS = {
   Monday: {
-    label: "Monday — Lower",
+    label: "Monday — Lower (~58 min)",
     exercises: [
-      { name: "Smith Machine Squat", target: "4×4–6", key: true },
-      { name: "Romanian Deadlift (Smith)", target: "3×6–8" },
-      { name: "Leg Press", target: "3×8–10" },
-      { name: "Seated Leg Curl", target: "3×10–12" },
-      { name: "Leg Extension", target: "3×12–15" },
-      { name: "Hip Thrust Machine", target: "3×10–12" },
-      { name: "Standing Calf Raise", target: "3×12–15" },
-      { name: "Cable Crunch", target: "3×12–15", isNew: true },
-      { name: "Hanging Leg Raise", target: "3×10–12", isNew: true },
+      { name: "Smith Machine Squat", target: "4×4–6", rest: "2 min", execution: "Increase weight once you hit 6 reps on every set.", key: true },
+      { name: "Romanian Deadlift (Smith)", target: "3×6–8", rest: "90 sec", execution: "Hinge, don't squat — Smith bar removes grip demand." },
+      { name: "Leg Press", target: "3×8–10", rest: "75 sec", execution: "Feet shoulder-width. Watch left knee tracking." },
+      { name: "Seated Leg Curl", target: "3×10–12", rest: "60 sec (after pair)", execution: "Superset with Leg Extension. Squeeze both legs equally at peak." },
+      { name: "Leg Extension", target: "3×12–15", rest: "60 sec (after pair)", execution: "Superset with Seated Leg Curl. Single-leg optional for balance check." },
+      { name: "Hip Thrust Machine", target: "3×10–12", rest: "90 sec", execution: "Full hip extension — squeeze glutes at the top." },
+      { name: "Single-Leg Stand (left leg)", target: "2×30 sec", rest: "30 sec", execution: "Near a wall for safety. Vestibular + ankle stability." },
+      { name: "Cable Crunch", target: "3×12–15", rest: "60 sec", execution: "Direct ab hypertrophy work — squeeze, don't yank the cable.", isNew: true },
+      { name: "Hanging Leg Raise", target: "3×10–12", rest: "60 sec", execution: "Control the eccentric — no swinging.", isNew: true },
+      { name: "Side Plank", target: "2×30 sec/side", rest: "45 sec", execution: "Obliques + anti-rotation core.", isNew: true },
     ],
   },
   Wednesday: {
-    label: "Wednesday — Push",
+    label: "Wednesday — Push (~53 min)",
     exercises: [
-      { name: "Incline Press Machine", target: "4×6–8", key: true },
-      { name: "Machine Shoulder Press", target: "3×8–10" },
-      { name: "Flat Machine Chest Press", target: "3×10–12" },
-      { name: "Cable Lateral Raise", target: "3×12–15" },
-      { name: "Pec Deck / Cable Fly", target: "3×12–15" },
-      { name: "Rope Tricep Pushdown", target: "3×12–15" },
-      { name: "Overhead Cable Tricep Ext.", target: "2×12–15" },
+      { name: "Incline Press Machine", target: "4×6–8", rest: "2 min", execution: "Left dumbbell first — drop the weight if left can't match right.", key: true },
+      { name: "Cable Lateral Raise", target: "3×12–15", rest: "60 sec", execution: "Lead with elbow, not wrist. Placed here to stop fatigue stacking before your next press." },
+      { name: "Machine Shoulder Press", target: "3×8–10", rest: "90 sec", execution: "Full ROM — machine removes grip instability." },
+      { name: "Pec Deck / Cable Fly", target: "3×12–15", rest: "60 sec", execution: "Squeeze at peak contraction. Recovers shoulders before your final press." },
+      { name: "Flat Machine Chest Press", target: "3×10–12", rest: "90 sec", execution: "2 sec down, 1 sec up. Should hold reps better with the new order." },
+      { name: "Rope Tricep Pushdown", target: "3×12–15", rest: "60 sec", execution: "Rope distributes force — easier on left wrist than a bar." },
+      { name: "Overhead Cable Tricep Ext. (optional)", target: "2×12–15", rest: "60 sec", execution: "Keep elbows tucked. Cut this first if you're short on time." },
     ],
   },
   Friday: {
-    label: "Friday — Pull",
+    label: "Friday — Pull (~56 min)",
     exercises: [
-      { name: "Lat Pulldown", target: "4×6–8", key: true },
-      { name: "Machine High Row", target: "3×8–10" },
-      { name: "Rack Pull (below knee)", target: "3×5–6" },
-      { name: "Seated Cable Row", target: "3×10–12" },
-      { name: "Assisted Pull-Up", target: "3×6–10" },
-      { name: "Rear Delt Fly Machine", target: "3×12–15" },
-      { name: "Cable Crunch", target: "3×12–15", isNew: true },
-      { name: "Hanging Leg Raise", target: "3×10–12", isNew: true },
-      { name: "DB Curl (alternating)", target: "3×10–12" },
-      { name: "Hammer Curl", target: "2×10–12" },
+      { name: "Lat Pulldown", target: "4×6–8", rest: "2 min", execution: "Straps on left hand. Wide grip, pull to upper chest.", key: true },
+      { name: "Rear Delt Fly Machine", target: "3×12–15", rest: "60 sec", execution: "Machine removes grip demand — great rear delt isolation." },
+      { name: "Machine High Row", target: "3×8–10", rest: "90 sec", execution: "Retract scapula first, then pull. Feel lats, not just arms." },
+      { name: "Pallof Press", target: "3×10/side", rest: "60 sec", execution: "Anti-rotation core — key for stroke rehab and golf rotation." },
+      { name: "Rack Pull (below knee)", target: "3×5–6", rest: "2–3 min", execution: "Shortened ROM removes grip stress. Straps mandatory on left side." },
+      { name: "Cable Crunch", target: "3×12–15", rest: "60 sec (after pair)", execution: "Superset with Hanging Leg Raise. Direct ab hypertrophy work.", isNew: true },
+      { name: "Hanging Leg Raise", target: "3×10–12", rest: "60 sec (after pair)", execution: "Superset with Cable Crunch. Control the eccentric, no swinging.", isNew: true },
+      { name: "DB Curl (alternating)", target: "2×10–12", rest: "60 sec (after pair)", execution: "Superset with Hammer Curl. Left arm first — light enough for your grip." },
+      { name: "Hammer Curl", target: "2×10–12", rest: "60 sec (after pair)", execution: "Superset with DB Curl. Neutral grip is easier on left wrist." },
     ],
   },
 };
@@ -612,6 +612,7 @@ export default function LiftLog() {
                       </div>
                       <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
                         target {ex.target}
+                        {ex.rest && <span>{"  ·  rest "}{ex.rest}</span>}
                         {last && (
                           <span>
                             {"  ·  last: "}
@@ -625,6 +626,22 @@ export default function LiftLog() {
 
                   {isOpen && (
                     <div className="px-4 pb-4">
+                      {ex.execution && (
+                        <div
+                          style={{
+                            fontSize: 12,
+                            color: C.text,
+                            background: C.bg,
+                            borderLeft: `3px solid ${C.amber}`,
+                            borderRadius: 6,
+                            padding: "8px 10px",
+                            marginBottom: 12,
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {ex.execution}
+                        </div>
+                      )}
                       <div className="grid grid-cols-12 gap-2 pb-1.5" style={{ fontSize: 11, color: C.muted }}>
                         <div className="col-span-1">#</div>
                         <div className="col-span-4">Reps</div>
