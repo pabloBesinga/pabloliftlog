@@ -145,9 +145,9 @@ const STRETCH_ROUTINE = [
     minutes: 5,
     items: [
       { id: "wu1", name: "Seated deep breathing", duration: "1 min", note: "Sit cross-legged or in a chair, hands on knees." },
-      { id: "wu2", name: "Neck rolls", duration: "30 sec each way", note: "Slow and gentle, no forcing." },
+      { id: "wu2", name: "Neck rolls", duration: "30 sec each way", note: "Slow and gentle, no forcing.", video: "7K7k2c5P9cw" },
       { id: "wu3", name: "Shoulder rolls", duration: "1 min", note: "Forward, then backward." },
-      { id: "wu4", name: "Cat-Cow", duration: "2 min", note: "On forearms instead of flat palms if the left wrist needs it." },
+      { id: "wu4", name: "Cat-Cow", duration: "2 min", note: "On forearms instead of flat palms if the left wrist needs it.", video: "Fa4ZMS5M7xA" },
       { id: "wu5", name: "Gentle torso twists", duration: "1 min", note: "Seated or standing." },
     ],
   },
@@ -156,12 +156,12 @@ const STRETCH_ROUTINE = [
     minutes: 10,
     items: [
       { id: "st1", name: "Standing forward fold", duration: "1 min", note: "Let arms hang, knees soft." },
-      { id: "st2", name: "Standing side bend", duration: "30 sec/side", note: "Reach one arm overhead, other hand on hip." },
-      { id: "st3", name: "Low lunge stretch", duration: "1 min/side", note: "Hands on front knee, not floor, if left hand needs support." },
-      { id: "st4", name: "Standing quad stretch", duration: "30 sec/side", note: "Hold a wall for balance if needed." },
+      { id: "st2", name: "Standing side bend", duration: "30 sec/side", note: "Reach one arm overhead, other hand on hip.", video: "Vko-SJok-fk" },
+      { id: "st3", name: "Low lunge stretch", duration: "1 min/side", note: "Hands on front knee, not floor, if left hand needs support.", video: "Sl6q1igrxpk" },
+      { id: "st4", name: "Standing quad stretch", duration: "30 sec/side", note: "Hold a wall for balance if needed.", video: "Sl6q1igrxpk" },
       { id: "st5", name: "Chest opener", duration: "1 min", note: "Clasp hands behind back, or hold a shirt hem if fingers don't clasp easily." },
       { id: "st6", name: "Wide-legged forward fold", duration: "1 min", note: "" },
-      { id: "st7", name: "Standing hamstring stretch", duration: "1 min/side", note: "One leg on a low step, or just hinge forward." },
+      { id: "st7", name: "Standing hamstring stretch", duration: "1 min/side", note: "One leg on a low step, or just hinge forward.", video: "Sl6q1igrxpk" },
     ],
   },
   {
@@ -170,11 +170,11 @@ const STRETCH_ROUTINE = [
     items: [
       { id: "fl1", name: "Butterfly stretch", duration: "2 min", note: "Soles of feet together, gentle knee press." },
       { id: "fl2", name: "Seated forward fold", duration: "2 min", note: "" },
-      { id: "fl3", name: "Seated spinal twist", duration: "1 min/side", note: "Use right hand for the twist, left hand rests on knee." },
-      { id: "fl4", name: "Figure-4 stretch (glutes)", duration: "1 min/side", note: "Lying on back." },
+      { id: "fl3", name: "Seated spinal twist", duration: "1 min/side", note: "Use right hand for the twist, left hand rests on knee.", video: "sI44ZU33DjA" },
+      { id: "fl4", name: "Figure-4 stretch (glutes)", duration: "1 min/side", note: "Lying on back.", video: "Sl6q1igrxpk" },
       { id: "fl5", name: "Happy baby pose", duration: "1 min", note: "" },
-      { id: "fl6", name: "Supine spinal twist", duration: "1 min/side", note: "" },
-      { id: "fl7", name: "Child's pose", duration: "2 min", note: "Rest left hand flat or in a relaxed fist if extending it forward is uncomfortable." },
+      { id: "fl6", name: "Supine spinal twist", duration: "1 min/side", note: "", video: "Sl6q1igrxpk" },
+      { id: "fl7", name: "Child's pose", duration: "2 min", note: "Rest left hand flat or in a relaxed fist if extending it forward is uncomfortable.", video: "Sl6q1igrxpk" },
     ],
   },
   {
@@ -228,6 +228,7 @@ function LiftLog() {
   const [day, setDay] = useState("Monday");
   const [stretchDone, setStretchDone] = useState(() => new Set());
   const [stretchLoaded, setStretchLoaded] = useState(false);
+  const [openVideoId, setOpenVideoId] = useState(null);
   const [entries, setEntries] = useState({});
   const [openEx, setOpenEx] = useState(() => new Set(DAYS.Monday.exercises.map((e) => e.name)));
   const [lastValues, setLastValues] = useState({});
@@ -1111,22 +1112,6 @@ function LiftLog() {
       ) : view === "stretch" ? (
         <div className="px-5 pt-4 flex flex-col gap-4">
           <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
-            <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 2 }}>Follow-along video</div>
-            <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 10 }}>
-              Certified trainer-led, no equipment — closely matches this routine.
-            </div>
-            <div style={{ position: "relative", width: "100%", paddingTop: "56.25%", borderRadius: 10, overflow: "hidden", background: "#000" }}>
-              <iframe
-                src="https://www.youtube.com/embed/Sl6q1igrxpk"
-                title="30 Minute Full Body Stretching Exercises"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
-              />
-            </div>
-          </div>
-
-          <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
             <div className="flex items-center justify-between">
               <div>
                 <div style={{ fontSize: 15, fontWeight: 800 }}>Beginner Flexibility — 30 min</div>
@@ -1175,67 +1160,106 @@ function LiftLog() {
               <div className="px-4 py-2">
                 {sec.items.map((item) => {
                   const done = stretchDone.has(item.id);
+                  const videoOpen = openVideoId === item.id;
                   return (
-                    <div
-                      key={item.id}
-                      className="w-full flex items-start gap-3 py-2.5"
-                      style={{ borderTop: `1px solid ${C.cardBorder}` }}
-                    >
-                      <button
-                        onClick={() => toggleStretchItem(item.id)}
-                        className="flex items-start gap-3 text-left"
-                        style={{ flex: 1, minWidth: 0 }}
-                      >
-                        <div
-                          style={{
-                            marginTop: 2,
-                            width: 18,
-                            height: 18,
-                            minWidth: 18,
-                            borderRadius: 5,
-                            border: `1.5px solid ${done ? C.green : C.cardBorder}`,
-                            background: done ? C.greenSoft : "transparent",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
+                    <div key={item.id} style={{ borderTop: `1px solid ${C.cardBorder}` }}>
+                      <div className="w-full flex items-start gap-3 py-2.5">
+                        <button
+                          onClick={() => toggleStretchItem(item.id)}
+                          className="flex items-start gap-3 text-left"
+                          style={{ flex: 1, minWidth: 0 }}
                         >
-                          {done && <Check size={11} color={C.green} />}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
                           <div
                             style={{
-                              fontSize: 13,
-                              fontWeight: 600,
-                              color: done ? C.muted : C.text,
-                              textDecoration: done ? "line-through" : "none",
+                              marginTop: 2,
+                              width: 18,
+                              height: 18,
+                              minWidth: 18,
+                              borderRadius: 5,
+                              border: `1.5px solid ${done ? C.green : C.cardBorder}`,
+                              background: done ? C.greenSoft : "transparent",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
                             }}
                           >
-                            {item.name}
+                            {done && <Check size={11} color={C.green} />}
                           </div>
-                          {item.note && (
-                            <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{item.note}</div>
-                          )}
-                          <a
-                            href={howToUrl(item.name)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                fontSize: 13,
+                                fontWeight: 600,
+                                color: done ? C.muted : C.text,
+                                textDecoration: done ? "line-through" : "none",
+                              }}
+                            >
+                              {item.name}
+                            </div>
+                            {item.note && (
+                              <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{item.note}</div>
+                            )}
+                            {item.video ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenVideoId(videoOpen ? null : item.id);
+                                }}
+                                style={{
+                                  fontSize: 11.5,
+                                  fontWeight: 700,
+                                  color: C.amber,
+                                  marginTop: 4,
+                                  display: "inline-block",
+                                }}
+                              >
+                                {videoOpen ? "Hide video ▾" : "▶ Watch how to execute"}
+                              </button>
+                            ) : (
+                              <a
+                                href={howToUrl(item.name)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                  fontSize: 11.5,
+                                  fontWeight: 700,
+                                  color: C.amber,
+                                  marginTop: 4,
+                                  display: "inline-block",
+                                }}
+                              >
+                                How to execute (search) ▸
+                              </a>
+                            )}
+                          </div>
+                        </button>
+                        <div style={{ fontSize: 11.5, color: C.muted, whiteSpace: "nowrap", marginTop: 2 }}>
+                          {item.duration}
+                        </div>
+                      </div>
+                      {item.video && videoOpen && (
+                        <div style={{ paddingBottom: 12 }}>
+                          <div
                             style={{
-                              fontSize: 11.5,
-                              fontWeight: 700,
-                              color: C.amber,
-                              marginTop: 4,
-                              display: "inline-block",
+                              position: "relative",
+                              width: "100%",
+                              paddingTop: "56.25%",
+                              borderRadius: 10,
+                              overflow: "hidden",
+                              background: "#000",
                             }}
                           >
-                            How to execute ▸
-                          </a>
+                            <iframe
+                              src={`https://www.youtube.com/embed/${item.video}`}
+                              title={item.name}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
+                            />
+                          </div>
                         </div>
-                      </button>
-                      <div style={{ fontSize: 11.5, color: C.muted, whiteSpace: "nowrap", marginTop: 2 }}>
-                        {item.duration}
-                      </div>
+                      )}
                     </div>
                   );
                 })}
