@@ -76,6 +76,8 @@ const Check = ({ size, color }) => <Ic size={size} color={color}>✓</Ic>;
 const X = ({ size, color }) => <Ic size={size} color={color}>✕</Ic>;
 const Calendar = ({ size, color }) => <Ic size={size} color={color}>📅</Ic>;
 const Archive = ({ size, color }) => <Ic size={size} color={color}>🗄</Ic>;
+const Stretch = ({ size, color }) => <Ic size={size} color={color}>🧘</Ic>;
+const RotateCcw = ({ size, color }) => <Ic size={size} color={color}>↺</Ic>;
 
 
 // ---- Palette ----
@@ -136,6 +138,56 @@ const DAYS = {
   },
 };
 
+// ---- Stretch routine (30-min beginner flexibility, no equipment) ----
+const STRETCH_ROUTINE = [
+  {
+    section: "Warm-up",
+    minutes: 5,
+    items: [
+      { id: "wu1", name: "Seated deep breathing", duration: "1 min", note: "Sit cross-legged or in a chair, hands on knees." },
+      { id: "wu2", name: "Neck rolls", duration: "30 sec each way", note: "Slow and gentle, no forcing." },
+      { id: "wu3", name: "Shoulder rolls", duration: "1 min", note: "Forward, then backward." },
+      { id: "wu4", name: "Cat-Cow", duration: "2 min", note: "On forearms instead of flat palms if the left wrist needs it." },
+      { id: "wu5", name: "Gentle torso twists", duration: "1 min", note: "Seated or standing." },
+    ],
+  },
+  {
+    section: "Standing stretches",
+    minutes: 10,
+    items: [
+      { id: "st1", name: "Standing forward fold", duration: "1 min", note: "Let arms hang, knees soft." },
+      { id: "st2", name: "Standing side bend", duration: "30 sec/side", note: "Reach one arm overhead, other hand on hip." },
+      { id: "st3", name: "Low lunge stretch", duration: "1 min/side", note: "Hands on front knee, not floor, if left hand needs support." },
+      { id: "st4", name: "Standing quad stretch", duration: "30 sec/side", note: "Hold a wall for balance if needed." },
+      { id: "st5", name: "Chest opener", duration: "1 min", note: "Clasp hands behind back, or hold a shirt hem if fingers don't clasp easily." },
+      { id: "st6", name: "Wide-legged forward fold", duration: "1 min", note: "" },
+      { id: "st7", name: "Standing hamstring stretch", duration: "1 min/side", note: "One leg on a low step, or just hinge forward." },
+    ],
+  },
+  {
+    section: "Floor stretches",
+    minutes: 12,
+    items: [
+      { id: "fl1", name: "Butterfly stretch", duration: "2 min", note: "Soles of feet together, gentle knee press." },
+      { id: "fl2", name: "Seated forward fold", duration: "2 min", note: "" },
+      { id: "fl3", name: "Seated spinal twist", duration: "1 min/side", note: "Use right hand for the twist, left hand rests on knee." },
+      { id: "fl4", name: "Figure-4 stretch (glutes)", duration: "1 min/side", note: "Lying on back." },
+      { id: "fl5", name: "Happy baby pose", duration: "1 min", note: "" },
+      { id: "fl6", name: "Supine spinal twist", duration: "1 min/side", note: "" },
+      { id: "fl7", name: "Child's pose", duration: "2 min", note: "Rest left hand flat or in a relaxed fist if extending it forward is uncomfortable." },
+    ],
+  },
+  {
+    section: "Cool down",
+    minutes: 3,
+    items: [
+      { id: "cd1", name: "Legs-up-the-wall (or lie flat, knees bent)", duration: "2 min", note: "" },
+      { id: "cd2", name: "Final deep breaths", duration: "1 min", note: "Hands resting on belly." },
+    ],
+  },
+];
+const STRETCH_TOTAL_ITEMS = STRETCH_ROUTINE.reduce((n, s) => n + s.items.length, 0);
+
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -166,8 +218,10 @@ function fmtShort(dateStr) {
 }
 
 function LiftLog() {
-  const [view, setView] = useState("log"); // 'log' | 'history' | 'week'
+  const [view, setView] = useState("log"); // 'log' | 'history' | 'week' | 'stretch'
   const [day, setDay] = useState("Monday");
+  const [stretchDone, setStretchDone] = useState(() => new Set());
+  const [stretchLoaded, setStretchLoaded] = useState(false);
   const [entries, setEntries] = useState({});
   const [openEx, setOpenEx] = useState(() => new Set(DAYS.Monday.exercises.map((e) => e.name)));
   const [lastValues, setLastValues] = useState({});
@@ -234,6 +288,41 @@ function LiftLog() {
     } finally {
       setRestoring(false);
     }
+  };
+
+  // Load today's stretch checklist progress (resets automatically each new day)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await window.storage.get(`stretch:${todayISO()}`, false);
+        if (!cancelled && res && res.value) {
+          setStretchDone(new Set(JSON.parse(res.value)));
+        }
+      } catch (e) {
+        // no progress saved yet today
+      } finally {
+        if (!cancelled) setStretchLoaded(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const toggleStretchItem = (id) => {
+    setStretchDone((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      window.storage.set(`stretch:${todayISO()}`, JSON.stringify([...next]), false).catch(() => {});
+      return next;
+    });
+  };
+
+  const resetStretchProgress = () => {
+    setStretchDone(new Set());
+    window.storage.set(`stretch:${todayISO()}`, JSON.stringify([]), false).catch(() => {});
   };
 
   const [draftReady, setDraftReady] = useState(false);
@@ -594,12 +683,19 @@ function LiftLog() {
       <div className="px-5 pt-6 pb-3" style={{ borderBottom: `1px solid ${C.cardBorder}` }}>
         <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Lift Log</div>
         <div style={{ fontSize: 12, color: C.muted, marginTop: 2, marginBottom: 12 }}>
-          {view === "log" ? "Log today's sets" : view === "history" ? "Session history" : "Weekly summary"}
+          {view === "log"
+            ? "Log today's sets"
+            : view === "history"
+            ? "Session history"
+            : view === "stretch"
+            ? "30-min flexibility routine"
+            : "Weekly summary"}
         </div>
         <div className="flex gap-2">
           <TabButton id="log" icon={Dumbbell} label="Log" />
           <TabButton id="week" icon={Calendar} label="Week" />
           <TabButton id="history" icon={History} label="History" />
+          <TabButton id="stretch" icon={Stretch} label="Stretch" />
         </div>
       </div>
 
@@ -1004,6 +1100,109 @@ function LiftLog() {
                 }}
               />
             </div>
+          </div>
+        </div>
+      ) : view === "stretch" ? (
+        <div className="px-5 pt-4 flex flex-col gap-4">
+          <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
+            <div className="flex items-center justify-between">
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 800 }}>Beginner Flexibility — 30 min</div>
+                <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>No equipment. Tap a stretch to check it off.</div>
+              </div>
+              <div className="text-right">
+                <div style={{ fontSize: 20, fontWeight: 800, color: C.amber }}>
+                  {stretchDone.size}/{STRETCH_TOTAL_ITEMS}
+                </div>
+                <div style={{ fontSize: 10.5, color: C.muted }}>done</div>
+              </div>
+            </div>
+            <div style={{ marginTop: 12, height: 6, borderRadius: 999, background: C.cardBorder, overflow: "hidden" }}>
+              <div
+                style={{
+                  height: "100%",
+                  width: `${STRETCH_TOTAL_ITEMS ? (stretchDone.size / STRETCH_TOTAL_ITEMS) * 100 : 0}%`,
+                  background: C.amber,
+                  transition: "width 200ms ease",
+                }}
+              />
+            </div>
+            {stretchDone.size > 0 && (
+              <button
+                onClick={resetStretchProgress}
+                className="flex items-center gap-1.5 mt-3"
+                style={{ fontSize: 12, fontWeight: 700, color: C.muted }}
+              >
+                <RotateCcw size={13} /> Reset today's progress
+              </button>
+            )}
+          </div>
+
+          {STRETCH_ROUTINE.map((sec) => (
+            <div
+              key={sec.section}
+              style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, overflow: "hidden" }}
+            >
+              <div
+                className="flex items-center justify-between px-4 py-3"
+                style={{ borderBottom: `1px solid ${C.cardBorder}` }}
+              >
+                <div style={{ fontSize: 13.5, fontWeight: 700 }}>{sec.section}</div>
+                <div style={{ fontSize: 11.5, color: C.muted }}>~{sec.minutes} min</div>
+              </div>
+              <div className="px-4 py-2">
+                {sec.items.map((item) => {
+                  const done = stretchDone.has(item.id);
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => toggleStretchItem(item.id)}
+                      className="w-full flex items-start gap-3 py-2.5 text-left"
+                      style={{ borderTop: `1px solid ${C.cardBorder}` }}
+                    >
+                      <div
+                        style={{
+                          marginTop: 2,
+                          width: 18,
+                          height: 18,
+                          minWidth: 18,
+                          borderRadius: 5,
+                          border: `1.5px solid ${done ? C.green : C.cardBorder}`,
+                          background: done ? C.greenSoft : "transparent",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {done && <Check size={11} color={C.green} />}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div
+                          style={{
+                            fontSize: 13,
+                            fontWeight: 600,
+                            color: done ? C.muted : C.text,
+                            textDecoration: done ? "line-through" : "none",
+                          }}
+                        >
+                          {item.name}
+                        </div>
+                        {item.note && (
+                          <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{item.note}</div>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: C.muted, whiteSpace: "nowrap", marginTop: 2 }}>
+                        {item.duration}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          <div style={{ fontSize: 11.5, color: C.muted, textAlign: "center", padding: "4px 0 8px" }}>
+            Nothing here needs grip strength or sustained left-hand weight-bearing. Stretch to mild tension only — never pain.
           </div>
         </div>
       ) : (
