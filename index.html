@@ -188,6 +188,12 @@ const STRETCH_ROUTINE = [
 ];
 const STRETCH_TOTAL_ITEMS = STRETCH_ROUTINE.reduce((n, s) => n + s.items.length, 0);
 
+// Builds a YouTube search link so every stretch has an up-to-date "how to execute" reference
+function howToUrl(name) {
+  const q = encodeURIComponent(`${name} stretch how to proper form`);
+  return `https://www.youtube.com/results?search_query=${q}`;
+}
+
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -1105,6 +1111,22 @@ function LiftLog() {
       ) : view === "stretch" ? (
         <div className="px-5 pt-4 flex flex-col gap-4">
           <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
+            <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 2 }}>Follow-along video</div>
+            <div style={{ fontSize: 11.5, color: C.muted, marginBottom: 10 }}>
+              Certified trainer-led, no equipment — closely matches this routine.
+            </div>
+            <div style={{ position: "relative", width: "100%", paddingTop: "56.25%", borderRadius: 10, overflow: "hidden", background: "#000" }}>
+              <iframe
+                src="https://www.youtube.com/embed/Sl6q1igrxpk"
+                title="30 Minute Full Body Stretching Exercises"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
+              />
+            </div>
+          </div>
+
+          <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
             <div className="flex items-center justify-between">
               <div>
                 <div style={{ fontSize: 15, fontWeight: 800 }}>Beginner Flexibility — 30 min</div>
@@ -1154,47 +1176,67 @@ function LiftLog() {
                 {sec.items.map((item) => {
                   const done = stretchDone.has(item.id);
                   return (
-                    <button
+                    <div
                       key={item.id}
-                      onClick={() => toggleStretchItem(item.id)}
-                      className="w-full flex items-start gap-3 py-2.5 text-left"
+                      className="w-full flex items-start gap-3 py-2.5"
                       style={{ borderTop: `1px solid ${C.cardBorder}` }}
                     >
-                      <div
-                        style={{
-                          marginTop: 2,
-                          width: 18,
-                          height: 18,
-                          minWidth: 18,
-                          borderRadius: 5,
-                          border: `1.5px solid ${done ? C.green : C.cardBorder}`,
-                          background: done ? C.greenSoft : "transparent",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
+                      <button
+                        onClick={() => toggleStretchItem(item.id)}
+                        className="flex items-start gap-3 text-left"
+                        style={{ flex: 1, minWidth: 0 }}
                       >
-                        {done && <Check size={11} color={C.green} />}
-                      </div>
-                      <div style={{ flex: 1 }}>
                         <div
                           style={{
-                            fontSize: 13,
-                            fontWeight: 600,
-                            color: done ? C.muted : C.text,
-                            textDecoration: done ? "line-through" : "none",
+                            marginTop: 2,
+                            width: 18,
+                            height: 18,
+                            minWidth: 18,
+                            borderRadius: 5,
+                            border: `1.5px solid ${done ? C.green : C.cardBorder}`,
+                            background: done ? C.greenSoft : "transparent",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                           }}
                         >
-                          {item.name}
+                          {done && <Check size={11} color={C.green} />}
                         </div>
-                        {item.note && (
-                          <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{item.note}</div>
-                        )}
-                      </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div
+                            style={{
+                              fontSize: 13,
+                              fontWeight: 600,
+                              color: done ? C.muted : C.text,
+                              textDecoration: done ? "line-through" : "none",
+                            }}
+                          >
+                            {item.name}
+                          </div>
+                          {item.note && (
+                            <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{item.note}</div>
+                          )}
+                          <a
+                            href={howToUrl(item.name)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                              fontSize: 11.5,
+                              fontWeight: 700,
+                              color: C.amber,
+                              marginTop: 4,
+                              display: "inline-block",
+                            }}
+                          >
+                            How to execute ▸
+                          </a>
+                        </div>
+                      </button>
                       <div style={{ fontSize: 11.5, color: C.muted, whiteSpace: "nowrap", marginTop: 2 }}>
                         {item.duration}
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
