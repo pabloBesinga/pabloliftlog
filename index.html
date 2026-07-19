@@ -76,8 +76,7 @@ const Check = ({ size, color }) => <Ic size={size} color={color}>✓</Ic>;
 const X = ({ size, color }) => <Ic size={size} color={color}>✕</Ic>;
 const Calendar = ({ size, color }) => <Ic size={size} color={color}>📅</Ic>;
 const Archive = ({ size, color }) => <Ic size={size} color={color}>🗄</Ic>;
-const Stretch = ({ size, color }) => <Ic size={size} color={color}>🧘</Ic>;
-const RotateCcw = ({ size, color }) => <Ic size={size} color={color}>↺</Ic>;
+const Utensils = ({ size, color }) => <Ic size={size} color={color}>🍽</Ic>;
 
 
 // ---- Palette ----
@@ -94,105 +93,115 @@ const C = {
   danger: "#C9603C",
 };
 
+const NUTRITION = {
+  target: { kcal: 2250, protein: 195, carbs: 210, fat: 60 },
+  meals: [
+    {
+      name: "Meal 1 — Pre/Post Workout",
+      time: "9:30–11:00 AM",
+      note: "Biggest carb meal. Fuel your workout and recovery.",
+      foods: [
+        { name: "Whey Protein (ON)", amount: "30g / 1 scoop", kcal: 120, protein: 24, carbs: 3, fat: 1 },
+        { name: "Rolled Oats", amount: "70g", kcal: 263, protein: 9, carbs: 46, fat: 5 },
+        { name: "Banana", amount: "1 medium", kcal: 105, protein: 1, carbs: 27, fat: 0 },
+      ],
+    },
+    {
+      name: "Meal 2 — Lean Beef + Rice",
+      time: "1:00–2:00 PM",
+      note: "Post-workout refuel. Higher carbs now that budget allows it.",
+      foods: [
+        { name: "Lean Ground Beef (90%)", amount: "120g", kcal: 248, protein: 30, carbs: 0, fat: 12 },
+        { name: "Broccoli", amount: "100g", kcal: 35, protein: 3, carbs: 7, fat: 0 },
+        { name: "Cooked White Rice", amount: "140g", kcal: 182, protein: 4, carbs: 39, fat: 0 },
+        { name: "Boiled Eggs", amount: "2 pcs", kcal: 140, protein: 12, carbs: 1, fat: 10 },
+      ],
+    },
+    {
+      name: "Meal 3 — Afternoon Snack",
+      time: "4:30–5:00 PM",
+      note: "Peanut butter removed — rice cake count (Daddy D brand) bumped up to cover the calories instead.",
+      foods: [
+        { name: "Whole Eggs", amount: "2 pcs", kcal: 140, protein: 12, carbs: 1, fat: 10 },
+        { name: "Rice Cakes (Daddy D)", amount: "5 pcs", kcal: 175, protein: 3, carbs: 35, fat: 0 },
+      ],
+    },
+    {
+      name: "Meal 4 — Eggs + Light Carb",
+      time: "7:00–7:30 PM",
+      note: "Small carb bump kept — avoids zero-carb-at-night restriction.",
+      foods: [
+        { name: "Whole Eggs", amount: "2 pcs", kcal: 140, protein: 12, carbs: 1, fat: 10 },
+        { name: "Egg Whites", amount: "4 pcs", kcal: 68, protein: 16, carbs: 0, fat: 0 },
+        { name: "Rolled Oats", amount: "30g", kcal: 113, protein: 4, carbs: 20, fat: 2 },
+      ],
+    },
+    {
+      name: "Meal 5 — Chicken + Veg + Rice",
+      time: "10:30–11:00 PM",
+      note: "Late meal for your longer day — still light this close to sleep.",
+      foods: [
+        { name: "Chicken Breast", amount: "180g", kcal: 297, protein: 56, carbs: 0, fat: 6 },
+        { name: "Broccoli", amount: "150g", kcal: 53, protein: 5, carbs: 11, fat: 0 },
+        { name: "Boiled Egg", amount: "1 pc", kcal: 70, protein: 6, carbs: 1, fat: 5 },
+        { name: "Cooked White Rice", amount: "60g", kcal: 78, protein: 2, carbs: 17, fat: 0 },
+      ],
+    },
+  ],
+};
+
 const DAYS = {
-  Monday: {
-    label: "Monday — Lower (~58 min)",
-    exercises: [
-      { name: "Smith Machine Squat", target: "4×4–6", rest: "2 min", execution: "Increase weight once you hit 6 reps on every set.", key: true },
-      { name: "Romanian Deadlift (Smith)", target: "3×6–8", rest: "90 sec", execution: "Hinge, don't squat — Smith bar removes grip demand." },
-      { name: "Leg Press", target: "3×8–10", rest: "75 sec", execution: "Feet shoulder-width. Watch left knee tracking." },
-      { name: "Seated Leg Curl", target: "3×10–12", rest: "60 sec (after pair)", execution: "Superset with Leg Extension. Squeeze both legs equally at peak." },
-      { name: "Leg Extension", target: "3×12–15", rest: "60 sec (after pair)", execution: "Superset with Seated Leg Curl. Single-leg optional for balance check." },
-      { name: "Hip Thrust Machine", target: "3×10–12", rest: "90 sec", execution: "Full hip extension — squeeze glutes at the top." },
-      { name: "Single-Leg Stand (left leg)", target: "2×30 sec", rest: "30 sec", execution: "Near a wall for safety. Vestibular + ankle stability." },
-      { name: "Cable Crunch", target: "3×12–15", rest: "60 sec", execution: "Direct ab hypertrophy work — squeeze, don't yank the cable.", isNew: true },
-      { name: "Hanging Leg Raise", target: "3×10–12", rest: "60 sec", execution: "Control the eccentric — no swinging.", isNew: true },
-      { name: "Side Plank", target: "2×30 sec/side", rest: "45 sec", execution: "Obliques + anti-rotation core.", isNew: true },
-    ],
-  },
-  Wednesday: {
-    label: "Wednesday — Push (~53 min)",
+  UpperA: {
+    short: "Upper A",
+    label: "Upper A — Push emphasis (~52 min)",
     exercises: [
       { name: "Incline Press Machine", target: "4×6–8", rest: "2 min", execution: "Left dumbbell first — drop the weight if left can't match right.", key: true },
-      { name: "Cable Lateral Raise", target: "3×12–15", rest: "60 sec", execution: "Lead with elbow, not wrist. Placed here to stop fatigue stacking before your next press." },
+      { name: "Lat Pulldown", target: "3×8–10", rest: "90 sec", execution: "Lighter pull volume today — the heavy pull day is Upper B. Straps on left hand." },
       { name: "Machine Shoulder Press", target: "3×8–10", rest: "90 sec", execution: "Full ROM — machine removes grip instability." },
-      { name: "Pec Deck / Cable Fly", target: "3×12–15", rest: "60 sec", execution: "Squeeze at peak contraction. Recovers shoulders before your final press." },
-      { name: "Flat Machine Chest Press", target: "3×10–12", rest: "90 sec", execution: "2 sec down, 1 sec up. Should hold reps better with the new order." },
-      { name: "Rope Tricep Pushdown", target: "3×12–15", rest: "60 sec", execution: "Rope distributes force — easier on left wrist than a bar." },
-      { name: "Overhead Cable Tricep Ext. (optional)", target: "2×12–15", rest: "60 sec", execution: "Keep elbows tucked. Cut this first if you're short on time." },
+      { name: "Cable Lateral Raise", target: "3×12–15", rest: "60 sec (after pair)", execution: "Superset with Rope Tricep Pushdown. Lead with elbow, not wrist." },
+      { name: "Rope Tricep Pushdown", target: "3×12–15", rest: "60 sec (after pair)", execution: "Superset with Cable Lateral Raise. Rope is easier on left wrist than a bar." },
+      { name: "DB Curl (alternating)", target: "2×10–12", rest: "60 sec", execution: "Left arm first — light enough for your grip." },
+      { name: "Hanging Leg Raise", target: "3×10–12", rest: "60 sec", execution: "Swapped in from Lower A per your request — control the eccentric, no swinging.", isNew: true },
     ],
   },
-  Friday: {
-    label: "Friday — Pull (~56 min)",
+  LowerA: {
+    short: "Lower A",
+    label: "Lower A — Quad emphasis (~55 min)",
     exercises: [
-      { name: "Lat Pulldown", target: "4×6–8", rest: "2 min", execution: "Straps on left hand. Wide grip, pull to upper chest.", key: true },
-      { name: "Rear Delt Fly Machine", target: "3×12–15", rest: "60 sec", execution: "Machine removes grip demand — great rear delt isolation." },
+      { name: "Smith Machine Squat", target: "4×4–6", rest: "2 min", execution: "Increase weight once you hit 6 reps on every set.", key: true },
+      { name: "Leg Press", target: "3×8–10", rest: "75 sec", execution: "Feet shoulder-width. Watch left knee tracking." },
+      { name: "Leg Extension", target: "3×12–15", rest: "60 sec", execution: "Single-leg optional — great left-right balance check." },
+      { name: "Standing Calf Raise", target: "3×12–15", rest: "45 sec", execution: "Slow eccentric — 3 sec down." },
+      { name: "Single-Leg Stand (left leg)", target: "2×30 sec", rest: "30 sec", execution: "Near a wall for safety. Vestibular + ankle stability." },
+      { name: "Hanging Leg Raise", target: "3×10–12", rest: "60 sec", execution: "Control the eccentric — no swinging.", isNew: true },
+    ],
+  },
+  UpperB: {
+    short: "Upper B",
+    label: "Upper B — Pull emphasis (~52 min)",
+    exercises: [
+      { name: "Lat Pulldown", target: "4×6–8", rest: "2 min", execution: "KEY LIFT today — go heavier than Upper A. Straps on left hand, wide grip.", key: true },
+      { name: "Flat Machine Chest Press", target: "3×10–12", rest: "90 sec", execution: "Lighter press volume today — the heavy press day is Upper A. 2 sec down, 1 sec up." },
       { name: "Machine High Row", target: "3×8–10", rest: "90 sec", execution: "Retract scapula first, then pull. Feel lats, not just arms." },
-      { name: "Pallof Press", target: "3×10/side", rest: "60 sec", execution: "Anti-rotation core — key for stroke rehab and golf rotation." },
+      { name: "Pec Deck / Cable Fly", target: "3×12–15", rest: "60 sec (after pair)", execution: "Superset with Rear Delt Fly. Squeeze at peak contraction." },
+      { name: "Rear Delt Fly Machine", target: "3×12–15", rest: "60 sec (after pair)", execution: "Superset with Pec Deck. Machine removes grip demand." },
+      { name: "Hammer Curl", target: "2×10–12", rest: "60 sec", execution: "Neutral grip is easier on left wrist." },
+      { name: "Suitcase Carry (right hand)", target: "3×20–30 sec", rest: "45 sec", execution: "Swapped for Side Plank — trains left obliques without weight-bearing through your left arm. Hold DB in right hand, resist leaning.", isNew: true },
+    ],
+  },
+  LowerB: {
+    short: "Lower B",
+    label: "Lower B — Hinge emphasis (~50 min)",
+    exercises: [
+      { name: "Romanian Deadlift (Smith)", target: "4×6–8", rest: "2 min", execution: "KEY LIFT today. Hinge, don't squat — Smith bar removes grip demand.", key: true },
       { name: "Rack Pull (below knee)", target: "3×5–6", rest: "2–3 min", execution: "Shortened ROM removes grip stress. Straps mandatory on left side." },
-      { name: "Cable Crunch", target: "3×12–15", rest: "60 sec (after pair)", execution: "Superset with Hanging Leg Raise. Direct ab hypertrophy work.", isNew: true },
-      { name: "Hanging Leg Raise", target: "3×10–12", rest: "60 sec (after pair)", execution: "Superset with Cable Crunch. Control the eccentric, no swinging.", isNew: true },
-      { name: "DB Curl (alternating)", target: "2×10–12", rest: "60 sec (after pair)", execution: "Superset with Hammer Curl. Left arm first — light enough for your grip." },
-      { name: "Hammer Curl", target: "2×10–12", rest: "60 sec (after pair)", execution: "Superset with DB Curl. Neutral grip is easier on left wrist." },
+      { name: "Hip Thrust Machine", target: "3×10–12", rest: "90 sec", execution: "Full hip extension — squeeze glutes at the top." },
+      { name: "Seated Leg Curl", target: "3×10–12", rest: "60 sec", execution: "Squeeze both legs equally at peak contraction." },
+      { name: "Pallof Press", target: "3×10/side", rest: "60 sec", execution: "Anti-rotation core — key for stroke rehab and golf rotation." },
+      { name: "Hip Abductor Machine (optional)", target: "2×12–15", rest: "45 sec", execution: "Only if time allows — cut this first if you're short on time." },
     ],
   },
 };
-
-// ---- Stretch routine (30-min beginner flexibility, no equipment) ----
-const STRETCH_ROUTINE = [
-  {
-    section: "Warm-up",
-    minutes: 5,
-    items: [
-      { id: "wu1", name: "Seated deep breathing", duration: "1 min", note: "Sit cross-legged or in a chair, hands on knees." },
-      { id: "wu2", name: "Neck rolls", duration: "30 sec each way", note: "Slow and gentle, no forcing.", video: "7K7k2c5P9cw" },
-      { id: "wu3", name: "Shoulder rolls", duration: "1 min", note: "Forward, then backward." },
-      { id: "wu4", name: "Cat-Cow", duration: "2 min", note: "On forearms instead of flat palms if the left wrist needs it.", video: "Fa4ZMS5M7xA" },
-      { id: "wu5", name: "Gentle torso twists", duration: "1 min", note: "Seated or standing." },
-    ],
-  },
-  {
-    section: "Standing stretches",
-    minutes: 10,
-    items: [
-      { id: "st1", name: "Standing forward fold", duration: "1 min", note: "Let arms hang, knees soft." },
-      { id: "st2", name: "Standing side bend", duration: "30 sec/side", note: "Reach one arm overhead, other hand on hip.", video: "Vko-SJok-fk" },
-      { id: "st3", name: "Low lunge stretch", duration: "1 min/side", note: "Hands on front knee, not floor, if left hand needs support.", video: "Sl6q1igrxpk" },
-      { id: "st4", name: "Standing quad stretch", duration: "30 sec/side", note: "Hold a wall for balance if needed.", video: "Sl6q1igrxpk" },
-      { id: "st5", name: "Chest opener", duration: "1 min", note: "Clasp hands behind back, or hold a shirt hem if fingers don't clasp easily." },
-      { id: "st6", name: "Wide-legged forward fold", duration: "1 min", note: "" },
-      { id: "st7", name: "Standing hamstring stretch", duration: "1 min/side", note: "One leg on a low step, or just hinge forward.", video: "Sl6q1igrxpk" },
-    ],
-  },
-  {
-    section: "Floor stretches",
-    minutes: 12,
-    items: [
-      { id: "fl1", name: "Butterfly stretch", duration: "2 min", note: "Soles of feet together, gentle knee press." },
-      { id: "fl2", name: "Seated forward fold", duration: "2 min", note: "" },
-      { id: "fl3", name: "Seated spinal twist", duration: "1 min/side", note: "Use right hand for the twist, left hand rests on knee.", video: "sI44ZU33DjA" },
-      { id: "fl4", name: "Figure-4 stretch (glutes)", duration: "1 min/side", note: "Lying on back.", video: "Sl6q1igrxpk" },
-      { id: "fl5", name: "Happy baby pose", duration: "1 min", note: "" },
-      { id: "fl6", name: "Supine spinal twist", duration: "1 min/side", note: "", video: "Sl6q1igrxpk" },
-      { id: "fl7", name: "Child's pose", duration: "2 min", note: "Rest left hand flat or in a relaxed fist if extending it forward is uncomfortable.", video: "Sl6q1igrxpk" },
-    ],
-  },
-  {
-    section: "Cool down",
-    minutes: 3,
-    items: [
-      { id: "cd1", name: "Legs-up-the-wall (or lie flat, knees bent)", duration: "2 min", note: "" },
-      { id: "cd2", name: "Final deep breaths", duration: "1 min", note: "Hands resting on belly." },
-    ],
-  },
-];
-const STRETCH_TOTAL_ITEMS = STRETCH_ROUTINE.reduce((n, s) => n + s.items.length, 0);
-
-// Builds a YouTube search link so every stretch has an up-to-date "how to execute" reference
-function howToUrl(name) {
-  const q = encodeURIComponent(`${name} stretch how to proper form`);
-  return `https://www.youtube.com/results?search_query=${q}`;
-}
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -224,13 +233,10 @@ function fmtShort(dateStr) {
 }
 
 function LiftLog() {
-  const [view, setView] = useState("log"); // 'log' | 'history' | 'week' | 'stretch'
-  const [day, setDay] = useState("Monday");
-  const [stretchDone, setStretchDone] = useState(() => new Set());
-  const [stretchLoaded, setStretchLoaded] = useState(false);
-  const [openVideoId, setOpenVideoId] = useState(null);
+  const [view, setView] = useState("log"); // 'log' | 'history' | 'week' | 'nutrition'
+  const [day, setDay] = useState("UpperA");
   const [entries, setEntries] = useState({});
-  const [openEx, setOpenEx] = useState(() => new Set(DAYS.Monday.exercises.map((e) => e.name)));
+  const [openEx, setOpenEx] = useState(() => new Set(DAYS.UpperA.exercises.map((e) => e.name)));
   const [lastValues, setLastValues] = useState({});
   const [sessions, setSessions] = useState([]);
   const [weeklyArchive, setWeeklyArchive] = useState([]);
@@ -245,6 +251,22 @@ function LiftLog() {
   const [archiveMsg, setArchiveMsg] = useState("");
   const [restoring, setRestoring] = useState(false);
   const fileInputRef = useRef(null);
+
+  // ---- Food logging state ----
+  const [todayLog, setTodayLog] = useState([]);
+  const [logLoaded, setLogLoaded] = useState(false);
+  const [foodQuery, setFoodQuery] = useState("");
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupError, setLookupError] = useState("");
+  const [manualMode, setManualMode] = useState(false);
+  const [manualFood, setManualFood] = useState({ name: "", kcal: "", protein: "", carbs: "", fat: "" });
+  const [aiAvailable, setAiAvailable] = useState(true);
+  const [foodHistory, setFoodHistory] = useState([]);
+  const [expandedLogDate, setExpandedLogDate] = useState(null);
+  const [logDateDetail, setLogDateDetail] = useState({});
+  const [confirmingFoodReset, setConfirmingFoodReset] = useState(false);
+  const [archivingFood, setArchivingFood] = useState(false);
+  const [archiveFoodMsg, setArchiveFoodMsg] = useState("");
 
   const exportBackup = async () => {
     setError("");
@@ -295,41 +317,6 @@ function LiftLog() {
     } finally {
       setRestoring(false);
     }
-  };
-
-  // Load today's stretch checklist progress (resets automatically each new day)
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await window.storage.get(`stretch:${todayISO()}`, false);
-        if (!cancelled && res && res.value) {
-          setStretchDone(new Set(JSON.parse(res.value)));
-        }
-      } catch (e) {
-        // no progress saved yet today
-      } finally {
-        if (!cancelled) setStretchLoaded(true);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const toggleStretchItem = (id) => {
-    setStretchDone((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      window.storage.set(`stretch:${todayISO()}`, JSON.stringify([...next]), false).catch(() => {});
-      return next;
-    });
-  };
-
-  const resetStretchProgress = () => {
-    setStretchDone(new Set());
-    window.storage.set(`stretch:${todayISO()}`, JSON.stringify([]), false).catch(() => {});
   };
 
   const [draftReady, setDraftReady] = useState(false);
@@ -403,6 +390,212 @@ function LiftLog() {
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  const loadFoodLog = useCallback(async () => {
+    try {
+      const res = await window.storage.get(`foodlog:${todayISO()}`, false).catch(() => null);
+      setTodayLog(res ? JSON.parse(res.value) : []);
+      const idxRes = await window.storage.get("foodlog-index", false).catch(() => null);
+      setFoodHistory(idxRes ? JSON.parse(idxRes.value) : []);
+    } catch (e) {
+      setTodayLog([]);
+    } finally {
+      setLogLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadFoodLog();
+  }, [loadFoodLog]);
+
+  const saveFoodLog = async (updated) => {
+    setTodayLog(updated);
+    const date = todayISO();
+    const key = date; // the live/in-progress entry for today always uses the date as its key
+    await window.storage.set(`foodlog:${key}`, JSON.stringify(updated), false).catch(() => {});
+
+    const totals = updated.reduce(
+      (acc, f) => ({
+        kcal: acc.kcal + f.kcal,
+        protein: acc.protein + f.protein,
+        carbs: acc.carbs + f.carbs,
+        fat: acc.fat + f.fat,
+      }),
+      { kcal: 0, protein: 0, carbs: 0, fat: 0 }
+    );
+    const newIndex = [
+      { key, date, ...totals, items: updated.length, archived: false },
+      ...foodHistory.filter((d) => d.key !== key),
+    ]
+      .sort((a, b) => (b.date + (b.archived ? "z" : "a")).localeCompare(a.date + (a.archived ? "z" : "a")))
+      .slice(0, 150);
+    setFoodHistory(newIndex);
+    await window.storage.set("foodlog-index", JSON.stringify(newIndex), false).catch(() => {});
+    setLogDateDetail((prev) => ({ ...prev, [key]: updated }));
+  };
+
+  const addFoodEntry = async (entry) => {
+    const clean = {
+      name: entry.name || "Food",
+      kcal: Math.round(Number(entry.kcal) || 0),
+      protein: Math.round(Number(entry.protein) || 0),
+      carbs: Math.round(Number(entry.carbs) || 0),
+      fat: Math.round(Number(entry.fat) || 0),
+      source: entry.source || "manual entry",
+      loggedAt: new Date().toISOString(),
+    };
+    await saveFoodLog([...todayLog, clean]);
+  };
+
+  const deleteFoodEntry = async (idx) => {
+    await saveFoodLog(todayLog.filter((_, i) => i !== idx));
+  };
+
+  const loadLogDateDetail = async (key) => {
+    if (logDateDetail[key]) {
+      setExpandedLogDate(expandedLogDate === key ? null : key);
+      return;
+    }
+    try {
+      const res = await window.storage.get(`foodlog:${key}`, false);
+      const items = res ? JSON.parse(res.value) : [];
+      setLogDateDetail((prev) => ({ ...prev, [key]: items }));
+      setExpandedLogDate(key);
+    } catch (e) {
+      setLogDateDetail((prev) => ({ ...prev, [key]: [] }));
+      setExpandedLogDate(key);
+    }
+  };
+
+  const deleteLogDate = async (key) => {
+    try {
+      await window.storage.delete(`foodlog:${key}`, false).catch(() => {});
+      const newIndex = foodHistory.filter((d) => d.key !== key);
+      setFoodHistory(newIndex);
+      await window.storage.set("foodlog-index", JSON.stringify(newIndex), false).catch(() => {});
+      if (expandedLogDate === key) setExpandedLogDate(null);
+    } catch (e) {
+      // non-fatal
+    }
+  };
+
+  const archiveTodayAndReset = async () => {
+    if (todayLog.length === 0) return;
+    setArchivingFood(true);
+    const date = todayISO();
+    const archiveKey = `archive:${date}:${Date.now()}`;
+    const snapshot = todayLog;
+    const totals = todayTotals;
+    try {
+      const saved = await window.storage.set(`foodlog:${archiveKey}`, JSON.stringify(snapshot), false);
+      if (!saved) throw new Error("archive save failed");
+
+      const archivedEntry = {
+        key: archiveKey,
+        date,
+        kcal: totals.kcal,
+        protein: totals.protein,
+        carbs: totals.carbs,
+        fat: totals.fat,
+        items: snapshot.length,
+        archived: true,
+      };
+      const liveKey = date;
+      const liveEntry = { key: liveKey, date, kcal: 0, protein: 0, carbs: 0, fat: 0, items: 0, archived: false };
+
+      await window.storage.set(`foodlog:${liveKey}`, JSON.stringify([]), false).catch(() => {});
+
+      const newIndex = [
+        archivedEntry,
+        liveEntry,
+        ...foodHistory.filter((d) => d.key !== archiveKey && d.key !== liveKey),
+      ]
+        .sort((a, b) => (b.date + (b.archived ? "z" : "a")).localeCompare(a.date + (a.archived ? "z" : "a")))
+        .slice(0, 150);
+      await window.storage.set("foodlog-index", JSON.stringify(newIndex), false).catch(() => {});
+
+      setFoodHistory(newIndex);
+      setTodayLog([]);
+      setLogDateDetail((prev) => ({ ...prev, [archiveKey]: snapshot, [liveKey]: [] }));
+      setConfirmingFoodReset(false);
+      setArchiveFoodMsg(`Today's log archived (${totals.kcal.toLocaleString()} kcal) and reset.`);
+      setTimeout(() => setArchiveFoodMsg(""), 4000);
+    } catch (e) {
+      setLookupError("Couldn't archive today's log. Try again.");
+    } finally {
+      setArchivingFood(false);
+    }
+  };
+
+
+  const handleLookup = async () => {
+    const query = foodQuery.trim();
+    if (!query) return;
+    setLookupLoading(true);
+    setLookupError("");
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1024,
+          tools: [{ type: "web_search_20250305", name: "web_search" }],
+          messages: [
+            {
+              role: "user",
+              content: `Log nutrition for: "${query}".
+
+If this is a specific chain restaurant item, branded packaged food, or anything with an official published nutrition label, SEARCH THE WEB for the real figures first — don't estimate from memory. Pay close attention to exact variant (e.g. patty size, "no mayo", added extras) and add/subtract components precisely rather than guessing a round number. For plain home-cooked or generic foods without a brand, standard USDA-style estimates are fine without searching.
+
+After you have the real numbers, respond with ONLY a raw JSON object as your final message, no markdown fences, no explanation before or after it:
+{"name": "short food name", "kcal": number, "protein": number, "carbs": number, "fat": number, "source": "short source note, e.g. 'Burger King official nutrition' or 'estimated - generic food'"}`,
+            },
+          ],
+        }),
+      });
+      if (!response.ok) throw new Error("api unavailable");
+      const data = await response.json();
+      const text = (data.content || []).map((b) => b.text || "").join("").trim();
+      const clean = text.replace(/```json|```/g, "").trim();
+      const jsonMatch = clean.match(/\{[\s\S]*\}/);
+      const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : clean);
+      await addFoodEntry(parsed);
+      setFoodQuery("");
+      setAiAvailable(true);
+    } catch (e) {
+      // AI lookup isn't reachable outside the Claude chat environment —
+      // fall back to manual entry instead of failing silently.
+      setAiAvailable(false);
+      setManualMode(true);
+      setManualFood((prev) => ({ ...prev, name: query }));
+      setLookupError("AI lookup isn't available here — enter the macros manually below.");
+    } finally {
+      setLookupLoading(false);
+    }
+  };
+
+  const handleManualAdd = async () => {
+    if (!manualFood.name.trim()) {
+      setLookupError("Give the food a name first.");
+      return;
+    }
+    await addFoodEntry(manualFood);
+    setManualFood({ name: "", kcal: "", protein: "", carbs: "", fat: "" });
+    setManualMode(false);
+    setLookupError("");
+    setFoodQuery("");
+  };
+
+  const todayTotals = todayLog.reduce(
+    (acc, f) => ({
+      kcal: acc.kcal + f.kcal,
+      protein: acc.protein + f.protein,
+      carbs: acc.carbs + f.carbs,
+      fat: acc.fat + f.fat,
+    }),
+    { kcal: 0, protein: 0, carbs: 0, fat: 0 }
+  );
 
   const currentWeekMonday = mondayOf(todayISO());
   const currentWeekSunday = sundayOf(currentWeekMonday);
@@ -659,19 +852,21 @@ function LiftLog() {
       style={{
         flex: 1,
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 5,
-        padding: "8px 4px",
+        gap: 3,
+        padding: "7px 2px",
         borderRadius: 10,
-        fontSize: 12,
+        fontSize: 10.5,
         fontWeight: 700,
         border: `1px solid ${view === id ? C.amber : C.cardBorder}`,
         background: view === id ? C.amberSoft : "transparent",
         color: view === id ? C.amber : C.muted,
       }}
     >
-      <Icon size={14} /> {label}
+      <Icon size={14} />
+      {label}
     </button>
   );
 
@@ -694,15 +889,15 @@ function LiftLog() {
             ? "Log today's sets"
             : view === "history"
             ? "Session history"
-            : view === "stretch"
-            ? "30-min flexibility routine"
+            : view === "nutrition"
+            ? "Daily meal plan"
             : "Weekly summary"}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           <TabButton id="log" icon={Dumbbell} label="Log" />
           <TabButton id="week" icon={Calendar} label="Week" />
           <TabButton id="history" icon={History} label="History" />
-          <TabButton id="stretch" icon={Stretch} label="Stretch" />
+          <TabButton id="nutrition" icon={Utensils} label="Nutrition" />
         </div>
       </div>
 
@@ -721,23 +916,23 @@ function LiftLog() {
         </div>
       ) : view === "log" ? (
         <>
-          <div className="flex gap-2 px-5 pt-4">
+          <div className="flex gap-1.5 px-5 pt-4">
             {Object.keys(DAYS).map((d) => (
               <button
                 key={d}
                 onClick={() => setDay(d)}
                 style={{
                   flex: 1,
-                  padding: "9px 4px",
+                  padding: "9px 2px",
                   borderRadius: 10,
-                  fontSize: 12.5,
+                  fontSize: 11.5,
                   fontWeight: 700,
                   border: `1px solid ${day === d ? C.amber : C.cardBorder}`,
                   background: day === d ? C.amberSoft : "transparent",
                   color: day === d ? C.amber : C.muted,
                 }}
               >
-                {d}
+                {DAYS[d].short}
               </button>
             ))}
           </div>
@@ -1109,169 +1304,7 @@ function LiftLog() {
             </div>
           </div>
         </div>
-      ) : view === "stretch" ? (
-        <div className="px-5 pt-4 flex flex-col gap-4">
-          <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
-            <div className="flex items-center justify-between">
-              <div>
-                <div style={{ fontSize: 15, fontWeight: 800 }}>Beginner Flexibility — 30 min</div>
-                <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>No equipment. Tap a stretch to check it off.</div>
-              </div>
-              <div className="text-right">
-                <div style={{ fontSize: 20, fontWeight: 800, color: C.amber }}>
-                  {stretchDone.size}/{STRETCH_TOTAL_ITEMS}
-                </div>
-                <div style={{ fontSize: 10.5, color: C.muted }}>done</div>
-              </div>
-            </div>
-            <div style={{ marginTop: 12, height: 6, borderRadius: 999, background: C.cardBorder, overflow: "hidden" }}>
-              <div
-                style={{
-                  height: "100%",
-                  width: `${STRETCH_TOTAL_ITEMS ? (stretchDone.size / STRETCH_TOTAL_ITEMS) * 100 : 0}%`,
-                  background: C.amber,
-                  transition: "width 200ms ease",
-                }}
-              />
-            </div>
-            {stretchDone.size > 0 && (
-              <button
-                onClick={resetStretchProgress}
-                className="flex items-center gap-1.5 mt-3"
-                style={{ fontSize: 12, fontWeight: 700, color: C.muted }}
-              >
-                <RotateCcw size={13} /> Reset today's progress
-              </button>
-            )}
-          </div>
-
-          {STRETCH_ROUTINE.map((sec) => (
-            <div
-              key={sec.section}
-              style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, overflow: "hidden" }}
-            >
-              <div
-                className="flex items-center justify-between px-4 py-3"
-                style={{ borderBottom: `1px solid ${C.cardBorder}` }}
-              >
-                <div style={{ fontSize: 13.5, fontWeight: 700 }}>{sec.section}</div>
-                <div style={{ fontSize: 11.5, color: C.muted }}>~{sec.minutes} min</div>
-              </div>
-              <div className="px-4 py-2">
-                {sec.items.map((item) => {
-                  const done = stretchDone.has(item.id);
-                  const videoOpen = openVideoId === item.id;
-                  return (
-                    <div key={item.id} style={{ borderTop: `1px solid ${C.cardBorder}` }}>
-                      <div className="w-full flex items-start gap-3 py-2.5">
-                        <button
-                          onClick={() => toggleStretchItem(item.id)}
-                          className="flex items-start gap-3 text-left"
-                          style={{ flex: 1, minWidth: 0 }}
-                        >
-                          <div
-                            style={{
-                              marginTop: 2,
-                              width: 18,
-                              height: 18,
-                              minWidth: 18,
-                              borderRadius: 5,
-                              border: `1.5px solid ${done ? C.green : C.cardBorder}`,
-                              background: done ? C.greenSoft : "transparent",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            {done && <Check size={11} color={C.green} />}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div
-                              style={{
-                                fontSize: 13,
-                                fontWeight: 600,
-                                color: done ? C.muted : C.text,
-                                textDecoration: done ? "line-through" : "none",
-                              }}
-                            >
-                              {item.name}
-                            </div>
-                            {item.note && (
-                              <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{item.note}</div>
-                            )}
-                            {item.video ? (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenVideoId(videoOpen ? null : item.id);
-                                }}
-                                style={{
-                                  fontSize: 11.5,
-                                  fontWeight: 700,
-                                  color: C.amber,
-                                  marginTop: 4,
-                                  display: "inline-block",
-                                }}
-                              >
-                                {videoOpen ? "Hide video ▾" : "▶ Watch how to execute"}
-                              </button>
-                            ) : (
-                              <a
-                                href={howToUrl(item.name)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                style={{
-                                  fontSize: 11.5,
-                                  fontWeight: 700,
-                                  color: C.amber,
-                                  marginTop: 4,
-                                  display: "inline-block",
-                                }}
-                              >
-                                How to execute (search) ▸
-                              </a>
-                            )}
-                          </div>
-                        </button>
-                        <div style={{ fontSize: 11.5, color: C.muted, whiteSpace: "nowrap", marginTop: 2 }}>
-                          {item.duration}
-                        </div>
-                      </div>
-                      {item.video && videoOpen && (
-                        <div style={{ paddingBottom: 12 }}>
-                          <div
-                            style={{
-                              position: "relative",
-                              width: "100%",
-                              paddingTop: "56.25%",
-                              borderRadius: 10,
-                              overflow: "hidden",
-                              background: "#000",
-                            }}
-                          >
-                            <iframe
-                              src={`https://www.youtube.com/embed/${item.video}`}
-                              title={item.name}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-
-          <div style={{ fontSize: 11.5, color: C.muted, textAlign: "center", padding: "4px 0 8px" }}>
-            Nothing here needs grip strength or sustained left-hand weight-bearing. Stretch to mild tension only — never pain.
-          </div>
-        </div>
-      ) : (
+      ) : view === "history" ? (
         <div className="px-5 pt-4 flex flex-col gap-3">
           {sessions.length === 0 && (
             <div style={{ color: C.muted, fontSize: 13, textAlign: "center", padding: "32px 0" }}>
@@ -1291,7 +1324,7 @@ function LiftLog() {
                   className="w-full flex items-center justify-between px-4 py-3"
                 >
                   <div className="text-left">
-                    <div style={{ fontSize: 14, fontWeight: 700 }}>{s.day}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700 }}>{(DAYS[s.day] && DAYS[s.day].short) || s.day}</div>
                     <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
                       {s.date} · {s.totalVolume.toLocaleString()} kg volume
                     </div>
@@ -1317,6 +1350,383 @@ function LiftLog() {
                     </button>
                   </div>
                 )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="px-5 pt-4 flex flex-col gap-4">
+          {/* Daily target summary */}
+          <div style={{ background: C.card, border: `1px solid ${C.amber}`, borderRadius: 14, padding: 16 }}>
+            <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>
+              Daily Target
+            </div>
+            <div className="flex gap-5">
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 800 }}>{NUTRITION.target.kcal.toLocaleString()}</div>
+                <div style={{ fontSize: 10.5, color: C.muted }}>kcal</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 800 }}>{NUTRITION.target.protein}g</div>
+                <div style={{ fontSize: 10.5, color: C.muted }}>protein</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 800 }}>{NUTRITION.target.carbs}g</div>
+                <div style={{ fontSize: 10.5, color: C.muted }}>carbs</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 800 }}>{NUTRITION.target.fat}g</div>
+                <div style={{ fontSize: 10.5, color: C.muted }}>fat</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Today's food log */}
+          <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
+            <div className="flex items-center justify-between" style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                Today's Log
+              </div>
+              <div style={{ fontSize: 11.5, color: C.amber, fontWeight: 700 }}>
+                {todayTotals.kcal.toLocaleString()} / {NUTRITION.target.kcal.toLocaleString()} kcal
+              </div>
+            </div>
+
+            {/* progress bar */}
+            <div style={{ height: 6, background: C.bg, borderRadius: 3, overflow: "hidden", marginBottom: 12 }}>
+              <div
+                style={{
+                  height: "100%",
+                  width: `${Math.min(100, (todayTotals.kcal / NUTRITION.target.kcal) * 100)}%`,
+                  background: todayTotals.kcal > NUTRITION.target.kcal ? C.danger : C.amber,
+                }}
+              />
+            </div>
+
+            <div className="flex gap-5" style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 11.5, color: C.muted }}>
+                {todayTotals.protein}g <span style={{ color: C.text }}>P</span>
+              </div>
+              <div style={{ fontSize: 11.5, color: C.muted }}>
+                {todayTotals.carbs}g <span style={{ color: C.text }}>C</span>
+              </div>
+              <div style={{ fontSize: 11.5, color: C.muted }}>
+                {todayTotals.fat}g <span style={{ color: C.text }}>F</span>
+              </div>
+            </div>
+
+            {/* logged items */}
+            {logLoaded && todayLog.length > 0 && (
+              <div style={{ marginBottom: 14 }}>
+                {todayLog.map((f, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between"
+                    style={{ padding: "7px 0", borderTop: `1px solid ${C.cardBorder}`, fontSize: 12.5 }}
+                  >
+                    <div>
+                      <div>{f.name}</div>
+                      {f.source && (
+                        <div style={{ fontSize: 10, color: C.muted, marginTop: 1 }}>{f.source}</div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div style={{ color: C.muted, fontSize: 11.5, whiteSpace: "nowrap" }}>
+                        {f.kcal} kcal · {f.protein}P {f.carbs}C {f.fat}F
+                      </div>
+                      <button onClick={() => deleteFoodEntry(i)} style={{ color: C.muted, padding: 4 }} aria-label="Remove food">
+                        <X size={12} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* add food */}
+            {!manualMode ? (
+              <div>
+                <div style={{ fontSize: 12, color: C.muted, marginBottom: 6 }}>
+                  Log a food — Claude searches for real nutrition data on chain/branded items {aiAvailable ? "" : "(unavailable here — manual entry only)"}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    value={foodQuery}
+                    onChange={(e) => setFoodQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleLookup()}
+                    placeholder="e.g. 150g grilled chicken breast"
+                    style={{
+                      flex: 1,
+                      background: C.bg,
+                      border: `1px solid ${C.cardBorder}`,
+                      borderRadius: 8,
+                      padding: "9px 10px",
+                      color: C.text,
+                      fontSize: 13,
+                    }}
+                  />
+                  <button
+                    onClick={handleLookup}
+                    disabled={lookupLoading || !foodQuery.trim()}
+                    style={{
+                      background: C.amber,
+                      color: "#12151A",
+                      fontWeight: 800,
+                      fontSize: 12.5,
+                      borderRadius: 8,
+                      padding: "9px 14px",
+                      opacity: lookupLoading || !foodQuery.trim() ? 0.6 : 1,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {lookupLoading ? "Looking up…" : "Log it"}
+                  </button>
+                </div>
+                <button
+                  onClick={() => {
+                    setManualMode(true);
+                    setManualFood((prev) => ({ ...prev, name: foodQuery }));
+                  }}
+                  style={{ fontSize: 11.5, color: C.muted, marginTop: 8, textDecoration: "underline" }}
+                >
+                  Enter macros manually instead
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>Add food manually</div>
+                <input
+                  value={manualFood.name}
+                  onChange={(e) => setManualFood({ ...manualFood, name: e.target.value })}
+                  placeholder="Food name"
+                  style={{
+                    width: "100%",
+                    background: C.bg,
+                    border: `1px solid ${C.cardBorder}`,
+                    borderRadius: 8,
+                    padding: "9px 10px",
+                    color: C.text,
+                    fontSize: 13,
+                    marginBottom: 8,
+                  }}
+                />
+                <div className="grid grid-cols-4 gap-2" style={{ marginBottom: 10 }}>
+                  {["kcal", "protein", "carbs", "fat"].map((field) => (
+                    <input
+                      key={field}
+                      inputMode="numeric"
+                      value={manualFood[field]}
+                      onChange={(e) => setManualFood({ ...manualFood, [field]: e.target.value.replace(/[^0-9]/g, "") })}
+                      placeholder={field}
+                      style={{
+                        background: C.bg,
+                        border: `1px solid ${C.cardBorder}`,
+                        borderRadius: 8,
+                        padding: "8px 6px",
+                        color: C.text,
+                        fontSize: 12,
+                        textAlign: "center",
+                        width: "100%",
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleManualAdd}
+                    style={{ background: C.amber, color: "#12151A", fontWeight: 800, fontSize: 12.5, borderRadius: 8, padding: "8px 14px" }}
+                  >
+                    Add
+                  </button>
+                  <button
+                    onClick={() => {
+                      setManualMode(false);
+                      setLookupError("");
+                    }}
+                    style={{ border: `1px solid ${C.cardBorder}`, color: C.muted, fontWeight: 700, fontSize: 12.5, borderRadius: 8, padding: "8px 14px" }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {lookupError && (
+              <div style={{ fontSize: 11.5, color: C.danger, marginTop: 8 }}>{lookupError}</div>
+            )}
+
+            {archiveFoodMsg && (
+              <div
+                style={{ background: C.greenSoft, border: `1px solid ${C.green}`, borderRadius: 8, padding: "8px 10px", fontSize: 11.5, color: "#B7E0C6", marginTop: 10 }}
+              >
+                {archiveFoodMsg}
+              </div>
+            )}
+
+            <div className="mt-4" style={{ borderTop: `1px solid ${C.cardBorder}`, paddingTop: 12 }}>
+              {!confirmingFoodReset ? (
+                <button
+                  onClick={() => setConfirmingFoodReset(true)}
+                  disabled={todayLog.length === 0}
+                  className="flex items-center gap-2"
+                  style={{
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    color: todayLog.length === 0 ? C.muted : C.amber,
+                    opacity: todayLog.length === 0 ? 0.5 : 1,
+                  }}
+                >
+                  <Archive size={14} /> Archive day &amp; reset
+                </button>
+              ) : (
+                <div>
+                  <div style={{ fontSize: 12.5, color: C.text, marginBottom: 8 }}>
+                    This saves today's log permanently to history, then clears it so you can start fresh. Continue?
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={archiveTodayAndReset}
+                      disabled={archivingFood}
+                      style={{ background: C.amber, color: "#12151A", fontWeight: 800, fontSize: 12.5, borderRadius: 8, padding: "8px 14px" }}
+                    >
+                      {archivingFood ? "Archiving…" : "Confirm"}
+                    </button>
+                    <button
+                      onClick={() => setConfirmingFoodReset(false)}
+                      style={{ border: `1px solid ${C.cardBorder}`, color: C.muted, fontWeight: 700, fontSize: 12.5, borderRadius: 8, padding: "8px 14px" }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Food log history */}
+          <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}>
+            <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>
+              Food Log History
+            </div>
+            {foodHistory.filter((d) => d.archived || d.date !== todayISO()).length === 0 && (
+              <div style={{ fontSize: 12.5, color: C.muted }}>
+                Past days you've logged food will show up here.
+              </div>
+            )}
+            <div className="flex flex-col gap-2">
+              {foodHistory
+                .filter((d) => d.archived || d.date !== todayISO())
+                .map((d) => {
+                  const isOpen = expandedLogDate === d.key;
+                  const items = logDateDetail[d.key];
+                  const overTarget = d.kcal > NUTRITION.target.kcal;
+                  return (
+                    <div
+                      key={d.key}
+                      style={{ border: `1px solid ${d.archived ? C.amber : C.cardBorder}`, borderRadius: 10, overflow: "hidden" }}
+                    >
+                      <button
+                        onClick={() => loadLogDateDetail(d.key)}
+                        className="w-full flex items-center justify-between"
+                        style={{ padding: "10px 12px" }}
+                      >
+                        <div style={{ fontSize: 12.5, fontWeight: 700 }}>
+                          {fmtShort(d.date)}
+                          {d.archived && d.date === todayISO() && (
+                            <span style={{ marginLeft: 6, fontSize: 10, color: C.amber, fontWeight: 800 }}>ARCHIVED</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div style={{ fontSize: 11.5, color: overTarget ? C.danger : C.muted }}>
+                            {d.kcal.toLocaleString()} kcal · {d.protein}P {d.carbs}C {d.fat}F · {d.items} items
+                          </div>
+                          {isOpen ? <ChevronUp size={14} color={C.muted} /> : <ChevronDown size={14} color={C.muted} />}
+                        </div>
+                      </button>
+                      {isOpen && (
+                        <div style={{ padding: "0 12px 12px" }}>
+                          {(items || []).map((f, i) => (
+                            <div
+                              key={i}
+                              className="flex items-center justify-between"
+                              style={{ padding: "5px 0", borderTop: `1px solid ${C.cardBorder}`, fontSize: 12 }}
+                            >
+                              <div>
+                                <div>{f.name}</div>
+                                {f.source && (
+                                  <div style={{ fontSize: 9.5, color: C.muted, marginTop: 1 }}>{f.source}</div>
+                                )}
+                              </div>
+                              <div style={{ color: C.muted, fontSize: 11 }}>
+                                {f.kcal} kcal · {f.protein}P {f.carbs}C {f.fat}F
+                              </div>
+                            </div>
+                          ))}
+                          <button
+                            onClick={() => deleteLogDate(d.key)}
+                            className="flex items-center gap-1.5 mt-2"
+                            style={{ color: C.danger, fontSize: 11.5, fontWeight: 700 }}
+                          >
+                            <X size={12} /> Delete this day
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+
+          {/* Meals */}
+          <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em", marginTop: 4 }}>
+            Reference Meal Plan
+          </div>
+          {NUTRITION.meals.map((meal) => {
+            const totals = meal.foods.reduce(
+              (acc, f) => ({
+                kcal: acc.kcal + f.kcal,
+                protein: acc.protein + f.protein,
+                carbs: acc.carbs + f.carbs,
+                fat: acc.fat + f.fat,
+              }),
+              { kcal: 0, protein: 0, carbs: 0, fat: 0 }
+            );
+            return (
+              <div
+                key={meal.name}
+                style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, padding: 16 }}
+              >
+                <div className="flex items-center justify-between" style={{ marginBottom: 2 }}>
+                  <div style={{ fontSize: 14.5, fontWeight: 700 }}>{meal.name}</div>
+                  <div style={{ fontSize: 11.5, color: C.amber, fontWeight: 700 }}>{meal.time}</div>
+                </div>
+                <div style={{ fontSize: 12, color: C.muted, marginBottom: 10, lineHeight: 1.4 }}>{meal.note}</div>
+
+                {meal.foods.map((f) => (
+                  <div
+                    key={f.name}
+                    className="flex items-center justify-between"
+                    style={{ padding: "6px 0", borderTop: `1px solid ${C.cardBorder}`, fontSize: 12.5 }}
+                  >
+                    <div>
+                      <span>{f.name}</span>
+                      <span style={{ color: C.muted }}> · {f.amount}</span>
+                    </div>
+                    <div style={{ color: C.muted, fontSize: 11.5, whiteSpace: "nowrap", marginLeft: 8 }}>
+                      {f.kcal} kcal
+                    </div>
+                  </div>
+                ))}
+
+                <div
+                  className="flex items-center justify-between"
+                  style={{ paddingTop: 8, marginTop: 4, borderTop: `1px solid ${C.amber}` }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.amber }}>Meal Total</div>
+                  <div style={{ fontSize: 11.5, color: C.text }}>
+                    {totals.kcal} kcal · {totals.protein}P · {totals.carbs}C · {totals.fat}F
+                  </div>
+                </div>
               </div>
             );
           })}
