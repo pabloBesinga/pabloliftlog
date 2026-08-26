@@ -219,7 +219,7 @@ const EVOLT_AUDIT = [
 const DAYS = {
   UpperA: {
     short: "Upper A",
-    label: "Upper A — Heavy VERTICAL pull + press (~56 min)",
+    label: "Upper A — Heavy VERTICAL pull + press (~58 min)",
     warmup: ["Band Pull-Apart 1×20", "Scapular Pulldown (light, straps) 1×12", "Arm Circles + Shoulder CARs 1×10 each way"],
     exercises: [
       { name: "Lat Pulldown (wide, straps)", target: "4×6–8", rest: "2 min", key: true, moved: true,
@@ -232,6 +232,8 @@ const DAYS = {
         execution: "Superset with Rope Tricep Pushdown. Lead with the elbow, not the wrist. Cuff strap on the left wrist if the handle is awkward." },
       { name: "Rope Tricep Pushdown", target: "3×12–15", rest: "60 sec (after pair)",
         execution: "Superset with Cable Lateral Raise. Rope is kinder on the left wrist than a straight bar." },
+      { name: "Hammer Curl (neutral grip, LEFT first)", target: "2×10–12", rest: "60 sec (after round)", isNew: true,
+        execution: "NEW. Third movement in the superset above — makes it a tri-set, costs ~2 min. Direct bicep work was missing entirely. Neutral grip is easiest on the left wrist, and hammers hit the brachioradialis — forearm mass that feeds straight back into grip. LEFT ARM FIRST. Add weight once both sets hit 12." },
       { name: "Captain's Chair Leg Raise", target: "3×10–12", rest: "60 sec",
         execution: "Forearms on the pads — no grip or hanging needed. Once all 3 sets hit 12 with control, add a 2-second pause at the top before adding anything else." },
       { name: "Dead Hang (assisted)", target: "3×max sec", rest: "60 sec", isNew: true,
@@ -261,7 +263,7 @@ const DAYS = {
   },
   UpperB: {
     short: "Upper B",
-    label: "Upper B — Heavy HORIZONTAL pull + overhead (~56 min)",
+    label: "Upper B — Heavy HORIZONTAL pull + overhead (~58 min)",
     warmup: ["Dead Hang (assisted) 1×20–30 sec", "Band Face Pull 1×15", "Band External Rotation 1×12/side"],
     exercises: [
       { name: "Seated Cable Row / Machine High Row (straps)", target: "4×6–8", rest: "2 min", key: true, moved: true,
@@ -276,6 +278,8 @@ const DAYS = {
         execution: "Superset with Rear Delt Fly. Squeeze and hold at peak contraction." },
       { name: "Straight-Arm Pulldown (rope, straps)", target: "2×12–15", rest: "60 sec", isNew: true,
         execution: "NEW. Pure lat work with almost no grip and no biceps — arms stay straight the whole time. One of the best exercises available to you precisely because your hand contributes so little. Think about pushing the rope down and back with your armpits." },
+      { name: "Incline DB Curl or Cable Curl (LEFT first)", target: "2×10–12", rest: "60 sec (after pair)", isNew: true,
+        execution: "NEW. Superset this with the Straight-Arm Pulldown above — costs ~2 min, not a new block. Race reason: biceps are load-bearing on rope climb, monkey bars and the hoist, so building them lets the ARM contribute where your grip runs out. LEFT ARM FIRST, match the right to whatever the left managed. Add weight once both sets hit 12." },
       { name: "Suitcase Carry (RIGHT hand)", target: "3×20–30 sec", rest: "45 sec",
         execution: "Load in the RIGHT hand so your LEFT obliques and stabilisers do the anti-lean work — no weight-bearing through the left hand. Resist leaning. Walk if you have space." },
       { name: "Plate Pinch Hold (both hands)", target: "3×20–30 sec", rest: "45 sec",
