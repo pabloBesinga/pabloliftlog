@@ -97,9 +97,10 @@ const C = {
   dangerSoft: "#2A1D18",
 };
 
-// ============================ PLAN DATA (v6 — 20 Aug 2026) ============================
+// ============================ PLAN DATA (v8 PPLUL — 30 Sep 2026 · scan data 29 Sep) ============================
 
-const RUN_DAY_INDEXES = [3, 6]; // Wed, Sat
+const RUN_DAY_INDEXES = []; // v8: no scheduled runs (race off) — use the Run day toggle manually if you do a long run
+const LEGACY_DAY_NAMES = { UpperA: "Upper A", LowerA: "Lower A", UpperB: "Upper B", LowerB: "Lower B" }; // pre-v8 sessions
 
 const NUTRITION = {
   runTarget:  { kcal: 2570, protein: 208, carbs: 288, fat: 63 },
@@ -174,139 +175,157 @@ const CARB_SWAPS = [
 ];
 
 const SCAN = {
-  date: "20 Aug 2026",
-  prevDate: "3 Jul 2026",
+  date: "29 Sep 2026",
+  prevDate: "20 Aug 2026",
   rows: [
-    { label: "Weight", unit: "kg", prev: 89.4, now: 87.4, goodDown: true },
-    { label: "Body fat", unit: "%", prev: 17.8, now: 16.7, goodDown: true },
-    { label: "Fat mass", unit: "kg", prev: 15.9, now: 14.6, goodDown: true },
-    { label: "Lean body mass", unit: "kg", prev: 73.5, now: 72.8, goodUp: true },
-    { label: "Skeletal muscle", unit: "kg", prev: null, now: 40.6, goodUp: true },
-    { label: "BMR", unit: "kcal", prev: 1957, now: 1942 },
-    { label: "Evolt TEE", unit: "kcal", prev: 3013, now: 2990 },
-    { label: "Waist", unit: "cm", prev: null, now: 85.2, goodDown: true },
+    { label: "Weight", unit: "kg", prev: 87.4, now: 86.9, goodDown: true },
+    { label: "Body fat", unit: "%", prev: 16.7, now: 15.0, goodDown: true },
+    { label: "Fat mass", unit: "kg", prev: 14.6, now: 13.0, goodDown: true },
+    { label: "Lean body mass", unit: "kg", prev: 72.8, now: 73.9, goodUp: true },
+    { label: "Skeletal muscle", unit: "kg", prev: 40.6, now: 41.3, goodUp: true },
+    { label: "Visceral fat level", unit: "", prev: 9, now: 8, goodDown: true },
+    { label: "Torso fat", unit: "kg", prev: 9.09, now: 8.19, goodDown: true },
+    { label: "BMR", unit: "kcal", prev: 1942, now: 1966 },
+    { label: "Evolt TEE", unit: "kcal", prev: 2990, now: 3027 },
+    { label: "Waist", unit: "cm", prev: 85.2, now: 82.9, goodDown: true },
   ],
   segmental: [
-    { part: "Arm", left: 4.53, right: 4.45 },
-    { part: "Leg", left: 9.74, right: 9.84 },
+    { part: "Arm", left: 4.39, right: 4.44, prevLeft: 4.53, prevRight: 4.45 },
+    { part: "Leg", left: 10.39, right: 10.40, prevLeft: 9.74, prevRight: 9.84 },
+    { part: "Torso", now: 32.19, prev: 32.34 },
   ],
 };
 
 const BODY = {
-  lbm: 72.8,
-  current: 87.4,
-  target: 82.7,
+  lbm: 73.9,
+  current: 86.9,
+  target: 84.0,
   targetBf: 12,
   waistTarget: "80–81 cm",
   realTee: 2600,
 };
 
 const EVOLT_AUDIT = [
-  { item: "BMR 1,942 kcal", verdict: "SOUND", tone: "good",
-    detail: "Exactly Katch-McArdle: 370 + (21.6 × 72.8kg lean) = 1,942. Matches to the kcal. Right formula when you have body comp — but only as good as the lean-mass input." },
-  { item: "TEE 2,990 kcal", verdict: "TOO HIGH ~10–15%", tone: "bad",
-    detail: "2,990 ÷ 1,942 = a flat 1.54 multiplier — the canned 'moderately active' questionnaire setting, not a measurement. Your own data: 2.0kg over 49 days = 230–315 kcal/day real deficit, so true maintenance is nearer 2,500–2,700." },
-  { item: "Calories 3,390–3,490", verdict: "IGNORE", tone: "bad",
-    detail: "That panel is the MUSCLE GAIN recommendation — the goal toggle on your scan is set to Muscle Gain, so it's TEE plus a bulking surplus. About 800 kcal above maintenance." },
-  { item: "Protein 254–262g", verdict: "OVERSHOOT", tone: "warn",
-    detail: "That's ~3 g/kg. Useful protein tops out near 2.2 g/kg in a deficit — about 190–215g for you. The rest is just expensive calories." },
-  { item: "Body fat 16.7%", verdict: "BROADLY RIGHT", tone: "good",
-    detail: "Cross-checked with the Navy tape method against your 85.2cm waist: 15–18% depending on neck size. Evolt sits right in that band." },
-  { item: "Lean mass 72.8kg", verdict: "A LITTLE GENEROUS", tone: "warn",
-    detail: "FFMI 25.8 at 168cm is at the natural ceiling. BIA flatters lean mass in well-hydrated people. Probably a couple of kg optimistic — which drags BMR up with it." },
+  { item: "BMR 1,966 kcal", verdict: "SOUND", tone: "good",
+    detail: "Exactly Katch-McArdle: 370 + (21.6 × 73.9kg lean) = 1,966. Right formula when you have body comp — but only as good as the lean-mass input, and that input looks a little generous." },
+  { item: "TEE 3,027 kcal", verdict: "TOO HIGH ~10–15%", tone: "bad",
+    detail: "3,027 ÷ 1,966 = the same flat 1.54 'moderately active' multiplier as last scan — a questionnaire setting, not a measurement. Your real-world maintenance is still nearer ~2,600." },
+  { item: "Calories 3,427–3,527", verdict: "IGNORE", tone: "bad",
+    detail: "That panel is the MUSCLE GAIN recommendation — the goal toggle is still set to Muscle Gain, so it's TEE plus a bulking surplus. Roughly 800+ kcal above maintenance." },
+  { item: "Protein 257–265g", verdict: "OVERSHOOT", tone: "warn",
+    detail: "~3 g/kg. Useful protein tops out near 2.2 g/kg in a deficit — about 190–215g for you. The rest is just expensive calories." },
+  { item: "Body fat 15.0%", verdict: "BROADLY RIGHT", tone: "good",
+    detail: "Down from 16.7%, and the waist dropped 85.2 → 82.9 cm in the same period. Tape and scanner agree on direction — that's the part to trust." },
+  { item: "Lean mass 73.9kg", verdict: "A LITTLE GENEROUS", tone: "warn",
+    detail: "FFMI ~26.2 at 168cm is above the usual natural ceiling, and total body water rose 0.8kg between scans. Some of the +1.1kg is likely water. Direction is fine; the exact number is optimistic." },
 ];
 
 const DAYS = {
-  UpperA: {
-    short: "Upper A",
-    label: "Upper A — Heavy VERTICAL pull + press (~58 min)",
-    warmup: ["Band Pull-Apart 1×20", "Scapular Pulldown (light, straps) 1×12", "Arm Circles + Shoulder CARs 1×10 each way"],
+  Push: {
+    short: "Push",
+    label: "Mon · Push — Chest, shoulders, triceps (~55 min)",
+    warmup: ["Band Pull-Apart 1×20", "Band External Rotation 1×12/side", "Arm Circles + Shoulder CARs 1×10 each way", "1–2 light ramp-up sets on the Incline Press"],
     exercises: [
-      { name: "Lat Pulldown (wide, straps)", target: "4×6–8 + 1 strapless", rest: "2 min", key: true, moved: true,
-        execution: "Back is your priority, so the heaviest pull of the week gets your freshest effort. Straps on BOTH hands for all 4 working sets — the point is to overload your lats, not your fingers. Bar to collarbone, elbows down and back. Add weight once ALL 4 sets hit 8.\n\nv7.1 — GRIP SET: after the 4th set, drop to ~60–70% and do ONE set strapless to grip failure. Log it as a 5th set. This replaces the Plate Pinch Hold: same left-hand motor-control work, no extra time, no hunting for plates, and the weight you can hold is a number that actually moves on the log." },
       { name: "Incline Press Machine", target: "4×6–8", rest: "2 min", key: true,
-        execution: "Unchanged — it's been working. The machine removes the left-hand stabilising demand. Add weight once ALL 4 sets hit 8." },
-      { name: "Chest-Supported Row (straps)", target: "3×8–10", rest: "90 sec",
-        execution: "The chest pad takes your lower back and torso stability out of it, so the left hand only has to hold — not stabilise. Squeeze the shoulder blades together, hold 1 sec at the top. This is the exercise that builds the thickness you're asking for. Add weight once all 3 sets hit 10." },
-      { name: "Cable Lateral Raise", target: "3×12–15", rest: "60 sec (after round)",
-        execution: "Tri-set with Rope Tricep Pushdown and Hammer Curl. Lead with the elbow, not the wrist. Cuff strap on the left wrist if the handle is awkward." },
-      { name: "Rope Tricep Pushdown", target: "3×12–15", rest: "60 sec (after round)",
-        execution: "Tri-set with Cable Lateral Raise and Hammer Curl. Rope is kinder on the left wrist than a straight bar." },
-      { name: "Hammer Curl (neutral grip, LEFT first)", target: "2×10–12", rest: "60 sec (after round)",
-        execution: "Third movement in the tri-set above — costs ~2 min, not a new block. Neutral grip is easiest on the left wrist, and hammers hit the brachioradialis: forearm mass that feeds straight back into grip. LEFT ARM FIRST. Add weight once both sets hit 12." },
+        execution: "Heaviest press of the week, done first. The machine removes the left-hand stabilising demand. Add weight once ALL 4 sets hit 8." },
+      { name: "Single-Arm Cable Lateral Raise (LEFT first)", target: "3×12–15 per side", rest: "60 sec", isNew: true,
+        execution: "Placed BETWEEN the two presses on purpose, so the shoulder press isn't done on already-tired pressing muscles. Cable at hand height, cuff strap on the left wrist so grip isn't involved. Lead with the elbow, stop at shoulder height. LEFT FIRST, right matches. Add weight once all sets hit 15." },
+      { name: "Machine Shoulder Press", target: "3×8–10", rest: "90 sec",
+        execution: "Full range of motion — the machine removes grip instability. Add weight once all 3 sets hit 10." },
+      { name: "Pec Deck / Cable Fly", target: "3×12–15", rest: "60 sec",
+        execution: "Chest isolation with no grip or balance demand. Squeeze and hold 1 sec at peak contraction." },
+      { name: "Rope Tricep Pushdown", target: "3×12–15", rest: "60 sec (after pair)",
+        execution: "Superset with the Overhead Extension. Rope is kinder on the left wrist than a straight bar. Elbows pinned to your sides." },
+      { name: "Single-Arm Cable Overhead Tricep Extension (LEFT first)", target: "3×10–12 per side", rest: "60 sec (after pair)", isNew: true,
+        execution: "Superset with Rope Pushdown. The overhead position stretches the long head — the biggest part of the tricep, which pushdowns underwork. Cable low, cuff or rope, face away, elbow pointing up and still. Lower to a stretch, extend fully. LEFT FIRST. Add weight once all sets hit 12." },
       { name: "Captain's Chair Leg Raise", target: "3×10–12", rest: "60 sec",
         execution: "Forearms on the pads — no grip or hanging needed. Once all 3 sets hit 12 with control, add a 2-second pause at the top before adding anything else." },
-      { name: "Dead Hang (assisted)", target: "3×max sec", rest: "60 sec",
-        execution: "Your scan says the left arm isn't smaller — it's under-recruited. So this is motor-control work, not strength work. Three short honest holds beat one grinding max hold. Assist enough to hold 15–20 sec with an active shoulder. Add seconds first, then remove assistance. Kept in the plan deliberately: with the pinch holds gone, this and the strapless pulldown set are your grip work." },
     ],
   },
-  LowerA: {
-    short: "Lower A",
-    label: "Lower A — Squat + unilateral leg (~53 min)",
+  Pull: {
+    short: "Pull",
+    label: "Tue · Pull — Back, rear delts, biceps (~58 min)",
+    warmup: ["Scapular Pulldown (light, straps) 1×12", "Band Face Pull 1×15", "Dead Hang (assisted) 1×20 sec"],
+    exercises: [
+      { name: "Lat Pulldown (wide, straps)", target: "4×6–8", rest: "2 min", key: true,
+        execution: "Heaviest vertical pull of the week, done first. Straps on BOTH hands so grip never limits the load. Bar to collarbone, elbows down and back. Add weight once ALL 4 sets hit 8. LAST SET STRAPLESS at ~60–70% of working weight, to grip failure — log that weight separately." },
+      { name: "Chest-Supported Row (straps)", target: "3×8–10", rest: "90 sec",
+        execution: "The chest pad takes lower back and torso stability out of it, so the left hand only has to hold. Squeeze the shoulder blades together, hold 1 sec at the top. Add weight once all 3 sets hit 10." },
+      { name: "Single-Arm Cable Row (strap, LEFT first)", target: "3×10 per side", rest: "60 sec",
+        execution: "Cable at mid-chest height. Stand square and DO NOT let the torso rotate. Pull with the elbow, squeeze, control the return. LEFT ARM FIRST. Add weight once both sides hit 10 for all 3 sets." },
+      { name: "Straight-Arm Pulldown (rope, straps)", target: "2×12–15", rest: "60 sec (after pair)",
+        execution: "Superset with Rear Delt Fly (the fly gets a 3rd set on its own). Pure lat work with almost no grip and no biceps. Push the rope down and back with your armpits." },
+      { name: "Rear Delt Fly Machine", target: "3×12–15", rest: "60 sec (after pair)",
+        execution: "Superset with Straight-Arm Pulldown. Machine removes grip demand entirely. Rear delts are half of what makes a back look strong from behind." },
+      { name: "Hammer Curl (neutral grip, LEFT first)", target: "3×10–12", rest: "60 sec", isNew: true,
+        execution: "Now 3 sets. Neutral grip is easiest on the left wrist, and hammers build forearm mass that feeds back into grip. LEFT ARM FIRST, match the right to whatever the left managed. Add weight once all 3 sets hit 12." },
+      { name: "Dead Hang (assisted)", target: "3×max sec", rest: "60 sec",
+        execution: "Motor-control work for the left hand, not strength work. Three short honest holds beat one grinding max hold. Assist enough to hold 15–20 sec with an active shoulder. Add seconds first, then remove assistance." },
+    ],
+  },
+  Legs: {
+    short: "Legs",
+    label: "Wed · Legs — Squat + unilateral leg, quad focus (~53 min)",
     warmup: ["90/90 Hip Rotations 1×8/side", "Bodyweight Squat 1×10", "Ankle Rocks 1×10/side"],
     exercises: [
-      { name: "Smith Machine Squat", target: "4×5–6", rest: "2 min", key: true,
-        execution: "Add weight once ALL 4 sets hit 6 with good form. Watch that your left knee tracks over the toes and doesn't cave on the way up." },
+      { name: "V-Squat Machine", target: "4×6–8", rest: "2 min", key: true, isNew: true,
+        execution: "v8.1 — replaces Smith Machine Squat. Shoulder pads carry the load, so the left hand does nothing, and the back support removes balance as a limiter. Feet shoulder-width, mid-platform; sit back and down as deep as you can while keeping your lower back on the pad. Push evenly through both feet and watch that the left knee tracks over the toes. First session: find a working weight that leaves ~2 reps in reserve — the numbers won't match your Smith squat. Add weight once ALL 4 sets hit 8." },
       { name: "Leg Press", target: "3×8–10", rest: "90 sec",
         execution: "Feet shoulder-width. Push evenly through both feet — it's easy to quietly favour the right. Add weight once all 3 sets hit 10." },
       { name: "Bulgarian Split Squat / Walking Lunge", target: "3×8–10 per leg", rest: "75 sec",
-        execution: "Your main left–right exposure on lower body — a machine hides a side difference, this doesn't. Hold dumbbells with straps, or go bodyweight and hug a plate if the grip is the limiter. Don't let your hand cap your legs. LEFT LEG FIRST, then match the right to whatever the left managed." },
+        execution: "Default: SMITH MACHINE Bulgarian Split Squat — your go-to. The fixed bar path takes balance and grip out of it, so the working leg can push hard. Rear foot on a bench behind you, bar on your upper back, most of the weight on the front foot; drop straight down until the back knee nearly touches the floor. LEFT LEG FIRST, then match the right to whatever the left managed — log both sides. Add weight once both legs hit 10 for all 3 sets. (Name kept as-is so your logged history carries over.)" },
       { name: "Standing Calf Raise", target: "3×12–15", rest: "45 sec (after pair)",
-        execution: "Superset with the Hip Abductor Machine — you were resting 45 sec anyway, so the pairing costs ~3 min, not a new block. Slow eccentric, 3 seconds down." },
+        execution: "Superset with the Hip Abductor Machine. Slow eccentric, 3 seconds down." },
       { name: "Hip Abductor Machine", target: "3×12–15", rest: "45 sec (after pair)",
-        execution: "Superset with Standing Calf Raise. Glute medius — the muscle that stops your left knee caving on the way out of a squat. Split squats and step-ups DEMAND it but don't BUILD it. LEAN YOUR TORSO SLIGHTLY FORWARD — sitting upright or leaning back shifts the work to TFL, which you don't want. Zero grip. Note the machine moves both legs together, so it hides a left–right difference — the Single-Leg Stand and Bulgarian Split Squat are where you catch that. Add weight once all 3 sets hit 15." },
-      { name: "Ab Crunch Machine (or Cable Crunch)", target: "3×12–15", rest: "60 sec", isNew: true,
-        execution: "NEW in v7.1 — replaces the Pallof Press. Same trunk job, but on a stack that goes up in plates instead of a band that never changes, so it belongs on the log. Seated, no setup, no floor space, no grip. CURL THE RIBS TOWARD THE HIPS — the common mistake is hinging at the hip with a flat spine, which turns it into a hip flexor exercise. Pause 1 sec at the bottom of the crunch, control the way back. Add weight once all 3 sets hit 15." },
+        execution: "Superset with Standing Calf Raise. LEAN YOUR TORSO SLIGHTLY FORWARD to bias glute medius over TFL. The machine moves both legs together, so it hides a left–right difference — the Split Squat and Single-Leg Stand are where you catch that. Add weight once all 3 sets hit 15." },
+      { name: "Ab Crunch Machine (or Cable Crunch)", target: "3×12–15", rest: "60 sec",
+        execution: "v7.1 — replaces Pallof Press. Seated, loaded, progresses on the stack. Curl the ribs toward the hips; don't just hinge at the hip with a straight spine. Pause 1 sec at the bottom. Add weight once all 3 sets hit 15." },
       { name: "Single-Leg Stand (left leg)", target: "2×30 sec", rest: "30 sec",
-        execution: "Kept — it costs one minute and it's the cheapest left–right check in the plan. Near a wall. Once 30 sec is stable on both legs, progress to eyes closed rather than adding load." },
+        execution: "Near a wall. Costs one minute and it's where you catch a left–right drift. Once 30 sec is stable, progress to eyes closed rather than adding load." },
     ],
   },
-  UpperB: {
-    short: "Upper B",
-    label: "Upper B — Heavy HORIZONTAL pull + overhead (~58 min)",
-    warmup: ["Dead Hang (assisted) 1×20–30 sec", "Band Face Pull 1×15", "Band External Rotation 1×12/side"],
+  Upper: {
+    short: "Upper",
+    label: "Fri · Upper — Horizontal pull + press, arms (~58 min)",
+    warmup: ["Band Pull-Apart 1×20", "Band Face Pull 1×15", "Band External Rotation 1×12/side"],
     exercises: [
-      { name: "Seated Cable Row / Machine High Row (straps)", target: "4×6–8 + 1 strapless", rest: "2 min", key: true, moved: true,
-        execution: "Monday hit your back vertically; today hits it horizontally. Pick whichever your gym does better and stick with it for the whole block — you can't track progress across two machines. Retract the shoulder blades FIRST, then pull with the elbows. Chest up, no rocking. Add weight once ALL 4 sets hit 8.\n\nv7.1 — GRIP SET: after the 4th set, drop to ~60–70% and do ONE set strapless to grip failure. Log it as a 5th set. Second half of the pinch-hold replacement. Never let grip cut a working set short — that's what the straps are for." },
-      { name: "Machine Shoulder Press", target: "3×8–10", rest: "90 sec",
-        execution: "Overhead pressing strength. Full range of motion — the machine removes grip instability. Add weight once all 3 sets hit 10." },
-      { name: "Flat Machine Chest Press", target: "3×10–12", rest: "90 sec",
-        execution: "Lighter press volume today; the heavy press day is Monday. 2 sec down, 1 sec up. Add weight once all 3 sets hit 12." },
-      { name: "Rear Delt Fly Machine", target: "3×12–15", rest: "60 sec (after pair)",
-        execution: "Superset with Pec Deck. Machine removes grip demand entirely. Rear delts are half of what makes a back look strong from behind." },
-      { name: "Pec Deck / Cable Fly", target: "3×12–15", rest: "60 sec (after pair)",
-        execution: "Superset with Rear Delt Fly. Squeeze and hold at peak contraction." },
-      { name: "Straight-Arm Pulldown (rope, straps)", target: "2×12–15", rest: "60 sec (after pair)",
-        execution: "Pure lat work with almost no grip and no biceps — arms stay straight the whole time. One of the best exercises available to you precisely because your hand contributes so little. Think about pushing the rope down and back with your armpits." },
-      { name: "Incline DB Curl or Cable Curl (LEFT first)", target: "2×10–12", rest: "60 sec (after pair)",
-        execution: "Superset with the Straight-Arm Pulldown above — costs ~2 min, not a new block. Building the bicep lets the ARM contribute where your grip runs out. LEFT ARM FIRST, match the right to whatever the left managed. Add weight once both sets hit 12." },
-      { name: "Single-Arm Cable Row (strap, LEFT first)", target: "3×10 per side", rest: "60 sec", isNew: true,
-        execution: "NEW in v7.1 — replaces BOTH the Suitcase Carry and the Plate Pinch Hold. Cable at mid-chest height, strap on the working hand. Stand square, feet even, and DO NOT LET THE TORSO ROTATE — the free side of your trunk resisting that twist is exactly the anti-lean job the suitcase carry was doing, except now it's loaded on a stack you can progress. Pull with the elbow, squeeze, control the return. Bonus: it's direct back volume, which is your stated number-one goal. LEFT ARM FIRST — the right only matches whatever the left managed. Add weight once both sides hit 10 on all 3 sets." },
+      { name: "Seated Cable Row / Machine High Row (straps)", target: "4×6–8", rest: "2 min", key: true,
+        execution: "Pick one machine and stick with it for the whole block. Retract the shoulder blades FIRST, then pull with the elbows. Chest up, no rocking. Add weight once ALL 4 sets hit 8. LAST SET STRAPLESS at ~60–70%, to grip failure — log it separately." },
+      { name: "Flat Machine Chest Press", target: "3×8–10", rest: "90 sec",
+        execution: "Second chest day of the week, so it's moderate. Both arms — watch that the left handle isn't lagging behind the right. 2 sec down, 1 sec up. Add weight once all 3 sets hit 10." },
+      { name: "Neutral-Grip Lat Pulldown (straps)", target: "3×10–12", rest: "90 sec", isNew: true,
+        execution: "Second lat angle of the week. Neutral (palms-facing) handle, straps on both hands. Pull to upper chest, elbows tight to your sides. Lighter and higher-rep than Tuesday's wide pulldown. Add weight once all 3 sets hit 12." },
+      { name: "Single-Arm Cable Lateral Raise (LEFT first)", target: "3×12–15 per side", rest: "60 sec (after pair)", isNew: true,
+        execution: "Superset with Rear Delt Fly. Cuff strap on the left wrist. Lead with the elbow, stop at shoulder height. LEFT FIRST. Add weight once all sets hit 15." },
+      { name: "Rear Delt Fly Machine", target: "2×15", rest: "60 sec (after pair)",
+        execution: "Superset with the lateral raise (the raise gets a 3rd set on its own). Lighter than Tuesday — chase the squeeze, not the load." },
+      { name: "Incline DB Curl or Cable Curl (LEFT first)", target: "3×10–12", rest: "60 sec (after pair)", isNew: true,
+        execution: "Now 3 sets. Superset with Rope Pushdown. LEFT ARM FIRST, match the right to whatever the left managed. Add weight once all 3 sets hit 12." },
+      { name: "Rope Tricep Pushdown", target: "2×12–15", rest: "60 sec (after pair)",
+        execution: "Superset with the curl (the curl gets a 3rd set on its own). Lighter than Monday — 2 sets to finish the arms." },
     ],
   },
-  LowerB: {
-    short: "Lower B",
-    label: "Lower B — Hinge (~52 min)",
+  Lower: {
+    short: "Lower",
+    label: "Sat · Lower — Hinge, posterior chain (~50 min)",
     warmup: ["90/90 Hip Rotations 1×8/side", "Broomstick Hip Hinge 1×10", "Glute Bridge 1×15"],
     exercises: [
       { name: "Romanian Deadlift (Smith, straps)", target: "4×6–8", rest: "2 min", key: true,
-        execution: "Hinge, don't squat — push the hips back, soft knees, bar stays close. Smith bar plus straps removes grip from the equation completely. Add weight once ALL 4 sets hit 8." },
+        execution: "Hinge, don't squat — push the hips back, soft knees, bar stays close. Add weight once ALL 4 sets hit 8." },
       { name: "Rack Pull (below knee, straps)", target: "3×5–6", rest: "2–3 min",
         execution: "Shortened range removes most of the grip stress while still loading the whole posterior chain heavy. Add weight once all 3 sets hit 6 with good form." },
       { name: "Hip Thrust Machine", target: "3×10–12", rest: "90 sec",
         execution: "Full hip extension, squeeze hard at the top." },
       { name: "Seated Leg Curl", target: "3×10–12", rest: "60 sec",
-        execution: "Squeeze both legs equally at peak contraction. Hamstrings protect the knee." },
+        execution: "Squeeze both legs equally at peak contraction." },
       { name: "Weighted Step-Up (40–50cm box)", target: "3×8 per leg", rest: "75 sec",
-        execution: "Drive through the WHOLE foot on the box — don't push off the trailing leg. LEFT LEG FIRST. Dumbbells with straps, or hug a plate." },
-      { name: "Burpee Ladder (race-conditional)", target: "3 rounds · 5→8→10", rest: "60 sec",
-        execution: "ON HOLD in v7.1 — this exists only for the Spartan burpee budget, and the race is currently undecided. If the race is ON it goes back to non-optional and builds toward 10/12/15. If the race is OFF, drop it and put the time into a second hinge or a fifth back movement. Either way it's conditioning, not strength — it was never carrying the program." },
+        execution: "Drive through the WHOLE foot on the box — don't push off the trailing leg. Left leg first. Dumbbells with straps, or hug a plate." },
       { name: "Wrist Curl (optional)", target: "2×12–15", rest: "45 sec (after pair)",
-        execution: "Only if you're under time. Forearm work feeds grip capacity. Left arm first, match the right's reps." },
+        execution: "Only if you're under time. Left arm first, match the right's reps." },
       { name: "Reverse Wrist Curl (optional)", target: "2×12–15", rest: "45 sec (after pair)",
-        execution: "Only if you're under time. Targets the extensors and balances the wrist. Left first." },
+        execution: "Only if you're under time. Left first." },
       { name: "Hip Adductor Machine (optional)", target: "2×12–15", rest: "45 sec",
-        execution: "Deliberately only 2 sets. Adductor magnus is a hip EXTENSOR — already hammered by the RDL, rack pull, squat and split squats. What it doesn't get is lengthened end-range work, which is where groin strains happen. Insurance, not a priority. START GENUINELY LIGHT: first-time adductor work is one of the most reliable sources of can't-walk-properly DOMS. Control the eccentric, don't bang the pads together. Add weight once both sets hit 15." },
+        execution: "Start genuinely light — novel adductor work is a reliable source of DOMS. Control the eccentric. Add weight once both sets hit 15." },
     ],
   },
 };
@@ -456,9 +475,9 @@ function WeightChart({ data, target }) {
 
 function LiftLog() {
   const [view, setView] = useState("log"); // log | week | history | food | body | race
-  const [day, setDay] = useState("UpperA");
+  const [day, setDay] = useState("Push");
   const [entries, setEntries] = useState({});
-  const [openEx, setOpenEx] = useState(() => new Set(DAYS.UpperA.exercises.map((e) => e.name)));
+  const [openEx, setOpenEx] = useState(() => new Set(DAYS.Push.exercises.map((e) => e.name)));
   const [lastValues, setLastValues] = useState({});
   const [sessions, setSessions] = useState([]);
   const [weeklyArchive, setWeeklyArchive] = useState([]);
@@ -940,7 +959,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
       <div className="px-5 pt-6 pb-3" style={{ borderBottom: `1px solid ${C.cardBorder}` }}>
         <div className="flex items-baseline justify-between">
           <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Lift Log</div>
-          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v7.1</div>
+          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.1 · PPLUL</div>
         </div>
         <div style={{ fontSize: 12, color: C.muted, marginTop: 2, marginBottom: 12 }}>
           {view === "log" ? "Log today's sets"
@@ -958,7 +977,6 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
         <div className="flex gap-1.5">
           <TabButton id="food" icon={Utensils} label="Food" />
           <TabButton id="body" icon={Scale} label="Body" />
-          <TabButton id="race" icon={Flag} label="Race" />
         </div>
       </div>
 
@@ -1024,7 +1042,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
                   {isOpen && (
                     <div className="px-4 pb-4">
                       {ex.execution && (
-                        <div style={{ fontSize: 12, color: C.text, background: C.bg, borderLeft: `3px solid ${ex.isNew ? C.green : ex.moved ? C.blue : C.amber}`, borderRadius: 6, padding: "8px 10px", marginBottom: 12, lineHeight: 1.45, whiteSpace: "pre-line" }}>
+                        <div style={{ fontSize: 12, color: C.text, background: C.bg, borderLeft: `3px solid ${ex.isNew ? C.green : ex.moved ? C.blue : C.amber}`, borderRadius: 6, padding: "8px 10px", marginBottom: 12, lineHeight: 1.45 }}>
                           {ex.execution}
                         </div>
                       )}
@@ -1178,7 +1196,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
               <div key={s.key} style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, overflow: "hidden" }}>
                 <button onClick={() => loadSessionDetail(s.key)} className="w-full flex items-center justify-between px-4 py-3">
                   <div className="text-left">
-                    <div style={{ fontSize: 14, fontWeight: 700 }}>{(DAYS[s.day] && DAYS[s.day].short) || s.day}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700 }}>{(DAYS[s.day] && DAYS[s.day].short) || LEGACY_DAY_NAMES[s.day] || s.day}</div>
                     <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{s.date} · {s.totalVolume.toLocaleString()} kg volume</div>
                   </div>
                   {isOpen ? <ChevronUp size={18} color={C.muted} /> : <ChevronDown size={18} color={C.muted} />}
@@ -1279,10 +1297,10 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
           <Card accent={C.green}>
             <Eyebrow color={C.green}>Why the target moved from 75 kg</Eyebrow>
             <div style={{ fontSize: 12.5, lineHeight: 1.55, color: C.text }}>
-              You carry <b>{BODY.lbm} kg of lean mass</b>. At 75 kg body weight that would put you at <b style={{ color: C.danger }}>2.9% body fat</b> — not reachable and not safe. To get there you'd have to give up about <b>6.8 kg of the muscle</b> you've spent a year building.
+              You carry <b>{BODY.lbm} kg of lean mass</b>. At 75 kg body weight that would put you at <b style={{ color: C.danger }}>{((1 - BODY.lbm / 75) * 100).toFixed(1)}% body fat</b> — not reachable and not safe. To get there at a healthy 12% you'd have to give up about <b>{(BODY.lbm - 75 * 0.88).toFixed(1)} kg of the muscle</b> you've spent a year building.
             </div>
             <div style={{ fontSize: 12.5, lineHeight: 1.55, color: C.text, marginTop: 10 }}>
-              <b style={{ color: C.green }}>{BODY.target} kg</b> is the same lean mass at {BODY.targetBf}% body fat: visibly lean, full strength, sustainable year-round. Cross-check it with a waist tape at <b>{BODY.waistTarget}</b> rather than the scale alone — BIA flatters lean mass, so the exact kg may shift.
+              <b style={{ color: C.green }}>{BODY.target} kg</b> is your current lean mass at {BODY.targetBf}% body fat (it rose from 82.7 as lean mass went up on the 29 Sep scan): visibly lean, full strength, sustainable year-round. Cross-check it with a waist tape at <b>{BODY.waistTarget}</b> rather than the scale alone — BIA flatters lean mass, so the exact kg may shift.
             </div>
           </Card>
 
@@ -1312,12 +1330,13 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
               );
             })}
             <div style={{ marginTop: 12, padding: "10px 12px", background: C.greenSoft, border: `1px solid ${C.green}`, borderRadius: 8, fontSize: 12, lineHeight: 1.5 }}>
-              <b>Left vs right — the most important number on the scan.</b><br />
-              Arm lean mass: left {SCAN.segmental[0].left} kg vs right {SCAN.segmental[0].right} kg. Your <b>left arm carries more lean mass than your right</b>, and Evolt rates you BALANCED. Legs are 1% apart.
-              The muscle is already there — the deficit is <b>neural</b> (motor control and grip recruitment), not size. That's why grip work in this plan is short, frequent and sub-maximal rather than heavy.
+              <b>Segments — legs grew, upper body held.</b><br />
+              Legs: left {SCAN.segmental[1].prevLeft} → <b>{SCAN.segmental[1].left}</b> kg, right {SCAN.segmental[1].prevRight} → <b>{SCAN.segmental[1].right}</b> kg — both up and now matched.<br />
+              Arms: left {SCAN.segmental[0].prevLeft} → <b>{SCAN.segmental[0].left}</b> kg, right {SCAN.segmental[0].prevRight} → <b>{SCAN.segmental[0].right}</b> kg. Torso {SCAN.segmental[2].prev} → {SCAN.segmental[2].now} kg. Flat — inside scan noise, but the right arm is now marginally ahead.<br />
+              Evolt still rates you BALANCED left–right.
             </div>
             <div style={{ marginTop: 10, padding: "10px 12px", background: C.dangerSoft, border: `1px solid ${C.danger}`, borderRadius: 8, fontSize: 12, lineHeight: 1.5, color: "#E8B79C" }}>
-              The 0.7 kg lean-mass drop is <b>inside BIA's error band</b> — your total body water is 52.4 kg, so a 1% hydration difference between scans moves apparent lean mass by ~0.5 kg on its own. Don't act on it until three scans point the same way.
+              Treat the <b>+1.1 kg lean gain as optimistic</b> — total body water rose 0.8 kg (52.4 → 53.2), and hydration alone moves apparent lean mass. The fat numbers all moving the same way (fat mass, torso, visceral, waist) is the part to trust.
             </div>
           </Card>
 
@@ -1341,7 +1360,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
               );
             })}
             <div style={{ marginTop: 12, padding: "10px 12px", background: C.amberSoft, border: `1px solid ${C.amber}`, borderRadius: 8, fontSize: 12, lineHeight: 1.5 }}>
-              <b>The rule that matters:</b> a body scanner estimates, the bathroom scale measures. Two weeks of your own trend beats any machine's number. Working maintenance: <b>~{BODY.realTee.toLocaleString()} kcal</b>, not Evolt's 2,990.
+              <b>The rule that matters:</b> a body scanner estimates, the bathroom scale measures. Two weeks of your own trend beats any machine's number. Working maintenance: <b>~{BODY.realTee.toLocaleString()} kcal</b>, not Evolt's 3,027.
             </div>
           </Card>
         </div>
@@ -1440,7 +1459,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
               <div><div style={{ fontSize: 20, fontWeight: 800 }}>{target.fat}g</div><div style={{ fontSize: 10.5, color: C.muted }}>fat</div></div>
             </div>
             <div style={{ fontSize: 11.5, color: C.muted, marginTop: 10, lineHeight: 1.5 }}>
-              Weekly average ~2,390. Run days are Wed and Sat — the app picks the right one for today automatically, but you can override it. Deficit is ~200–300 kcal against a working maintenance of ~{BODY.realTee.toLocaleString()}, not Evolt's 2,990.
+              Weekly average ~2,390. Run days are Wed and Sat — the app picks the right one for today automatically, but you can override it. Deficit is ~200–300 kcal against a working maintenance of ~{BODY.realTee.toLocaleString()}, not Evolt's 3,027.
             </div>
           </Card>
 
