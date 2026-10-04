@@ -1,4 +1,4 @@
-// Lift Log — v8.1 PPLUL (30 Sep 2026). Claude-artifact version of index.html.
+// Lift Log — v8.2 PPLUL (3 Oct 2026). Claude-artifact version of index.html.
 // Same plan data and logic as the PWA; storage uses window.storage (artifact) instead of the localStorage shim.
 import { useState, useEffect, useCallback, useRef } from "react";
 
@@ -37,7 +37,7 @@ const C = {
   dangerSoft: "#2A1D18",
 };
 
-// ============================ PLAN DATA (v8 PPLUL — 30 Sep 2026 · scan data 29 Sep) ============================
+// ============================ PLAN DATA (v8.2 PPLUL — 3 Oct 2026 · scan data 29 Sep) ============================
 
 const RUN_DAY_INDEXES = []; // v8: no scheduled runs (race off) — use the Run day toggle manually if you do a long run
 const LEGACY_DAY_NAMES = { UpperA: "Upper A", LowerA: "Lower A", UpperB: "Upper B", LowerB: "Lower B" }; // pre-v8 sessions
@@ -205,15 +205,17 @@ const DAYS = {
   },
   Legs: {
     short: "Legs",
-    label: "Wed · Legs — Squat + unilateral leg, quad focus (~53 min)",
+    label: "Wed · Legs — V-squat + unilateral leg (~54 min)",
     warmup: ["90/90 Hip Rotations 1×8/side", "Bodyweight Squat 1×10", "Ankle Rocks 1×10/side"],
     exercises: [
       { name: "V-Squat Machine", target: "4×6–8", rest: "2 min", key: true, isNew: true,
         execution: "v8.1 — replaces Smith Machine Squat. Shoulder pads carry the load, so the left hand does nothing, and the back support removes balance as a limiter. Feet shoulder-width, mid-platform; sit back and down as deep as you can while keeping your lower back on the pad. Push evenly through both feet and watch that the left knee tracks over the toes. First session: find a working weight that leaves ~2 reps in reserve — the numbers won't match your Smith squat. Add weight once ALL 4 sets hit 8." },
-      { name: "Leg Press", target: "3×8–10", rest: "90 sec",
-        execution: "Feet shoulder-width. Push evenly through both feet — it's easy to quietly favour the right. Add weight once all 3 sets hit 10." },
       { name: "Bulgarian Split Squat / Walking Lunge", target: "3×8–10 per leg", rest: "75 sec",
         execution: "Default: SMITH MACHINE Bulgarian Split Squat — your go-to. The fixed bar path takes balance and grip out of it, so the working leg can push hard. Rear foot on a bench behind you, bar on your upper back, most of the weight on the front foot; drop straight down until the back knee nearly touches the floor. LEFT LEG FIRST, then match the right to whatever the left managed — log both sides. Add weight once both legs hit 10 for all 3 sets. (Name kept as-is so your logged history carries over.)" },
+      { name: "Leg Extension", target: "3×10–12", rest: "60 sec (after pair)", isNew: true,
+        execution: "v8.2 — replaces Leg Press. Superset with Seated Leg Curl. Both legs for now: your legs are even on the scan and the Smith split squat already covers left-vs-right. Pad on the lower shin, hands on the side handles (no grip needed). Push evenly — both shins should drive the pad up together. 1-sec squeeze at the top, 2 sec down. Add weight once all 3 sets hit 12. Every few weeks, finish the last set with a few LEFT-only reps; if the left can't handle about half your two-leg weight, switch to single-leg." },
+      { name: "Seated Leg Curl", target: "3×10–12", rest: "60 sec (after pair)", isNew: true,
+        execution: "v8.2 — added. Superset with Leg Extension. Hamstrings were only trained on Saturday; this makes it twice a week. Squeeze both legs equally at peak contraction, slow on the way up. Same machine as Saturday, so your logged weights carry over." },
       { name: "Standing Calf Raise", target: "3×12–15", rest: "45 sec (after pair)",
         execution: "Superset with the Hip Abductor Machine. Slow eccentric, 3 seconds down." },
       { name: "Hip Abductor Machine", target: "3×12–15", rest: "45 sec (after pair)",
@@ -338,7 +340,9 @@ const PROGRESSION_RULES = [
   "ACCESSORIES (2–3 sets): same rule; these can progress faster, lower risk.",
   "Increment: the smallest plate or pin jump available (2.5–5 kg). Bigger jumps buy missed reps, not faster progress.",
   "LEFT-PRIORITY RULE: log left and right separately, left goes first, and only progress the weight if your LEFT side can also hit the new target.",
-  "CARRIES AND HOLDS: add TIME first. Once all sets hit the top of the time range, then add load.",
+  "HOLDS (dead hang): add TIME first. Once all sets hit the top of the time range, then reduce assistance.",
+  "SMALL WINS COUNT: if the next weight jump is too big, add ONE rep to one set instead. 6,6,6,6 → 7,6,6,6 is progress. Use add-on plates or the half-pin where the machine has one.",
+  "STALL RESET: a lift that hasn't gained a rep or any weight in 3 sessions → drop it 10% and build back over 2–3 weeks. You'll usually pass the old best within a month.",
   "You're in a deficit, so recovery is taxed. Reps drop two sessions running on the same weight → hold the weight. Two weeks running → deload 10% for one week.",
 ];
 
@@ -899,7 +903,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
       <div className="px-5 pt-6 pb-3" style={{ borderBottom: `1px solid ${C.cardBorder}` }}>
         <div className="flex items-baseline justify-between">
           <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Lift Log</div>
-          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.1 · PPLUL</div>
+          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.2 · PPLUL</div>
         </div>
         <div style={{ fontSize: 12, color: C.muted, marginTop: 2, marginBottom: 12 }}>
           {view === "log" ? "Log today's sets"
