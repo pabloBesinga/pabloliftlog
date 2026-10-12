@@ -220,11 +220,29 @@ const EVOLT_AUDIT = [
     detail: "FFMI ~26.2 at 168cm is above the usual natural ceiling, and total body water rose 0.8kg between scans. Some of the +1.1kg is likely water. Direction is fine; the exact number is optimistic." },
 ];
 
+const STRETCH_RULE = "Hold each stretch about 30 sec and breathe slowly. Aim for a gentle pull, never pain, and don't bounce. Left side first; if it feels tighter, give it a few extra seconds.";
+const STRETCHES = {
+  chest: { name: "Wall Chest Stretch", time: "30 sec / side", muscle: "Chest · front delts", how: "Forearm flat on a wall or rack upright at shoulder height, elbow bent 90°. Step forward with the same-side foot and turn your chest away until you feel a gentle stretch across the chest. No gripping." },
+  crossBody: { name: "Cross-Body Shoulder Stretch", time: "30 sec / side", muscle: "Shoulders (rear delts) · upper back", how: "Bring one arm straight across your chest and hold it there with the other forearm hooked at the elbow, so no grip is needed. Keep the shoulder down, away from your ear." },
+  tricep: { name: "Overhead Tricep Stretch", time: "30 sec / side", muscle: "Triceps · lats", how: "Raise one arm and bend the elbow so the hand drops behind your head. Gently press the elbow back with the other hand, or just lean the elbow against a wall." },
+  childsPose: { name: "Child's Pose", time: "45 sec", muscle: "Back (lats) · lower back", how: "Kneel on a mat, sit your hips back toward your heels and stretch both arms forward on the floor, forehead down. Breathe slowly. Walk your hands a little to each side to reach each lat." },
+  biceps: { name: "Wall Biceps Stretch", time: "30 sec / side", muscle: "Biceps · chest, front delts", how: "Palm flat on a wall behind you at shoulder height, fingers pointing back, arm straight. Slowly turn your body away from the wall. The palm stays flat, so no gripping." },
+  forearm: { name: "Wall Forearm Stretch", time: "30 sec / side", muscle: "Forearms · grip", how: "Arm straight in front of you, palm flat on a wall with fingers pointing down. Lean in gently until you feel the inside of the forearm. Good for the left hand after dead hangs and strapless sets." },
+  benchQuad: { name: "Bench Quad Stretch", time: "30 sec / leg", muscle: "Quads · hip flexors", how: "Same setup as your split squat, no weight: rear foot laces-down on the bench, front foot forward. Stand tall and tuck your hips under until you feel the front of the back thigh. Hold the rack for balance." },
+  hamstring: { name: "Seated Hamstring Stretch", time: "30 sec / leg", muscle: "Hamstrings", how: "Sit on a bench with one leg straight along it and the other foot on the floor. Keep your back straight and lean forward from the hips until you feel the back of the thigh. Don't round down to reach your toes." },
+  calf: { name: "Wall Calf Stretch", time: "30 sec / leg", muscle: "Calves", how: "Hands on a wall, one foot stepped back with the leg straight and the heel down. Lean forward until you feel the calf." },
+  butterfly: { name: "Butterfly Stretch", time: "30 sec", muscle: "Adductors (inner thigh)", how: "Sit on a mat, soles of your feet together, knees out to the sides. Sit tall and let the knees drop on their own. Don't push them down." },
+  figure4: { name: "Seated Figure-4 Glute Stretch", time: "30 sec / side", muscle: "Glutes", how: "Sit tall on a bench, cross one ankle over the opposite knee, and lean forward slightly with a straight back until you feel it in the glute." },
+  hipFlexor: { name: "Kneeling Hip Flexor Stretch", time: "30 sec / side", muscle: "Hip flexors · quads", how: "Kneel on one knee on a mat or pad, other foot forward. Squeeze the glute on the kneeling side and shift your hips slightly forward. Stay tall; don't lean back. Hand on a bench for balance." },
+  kneesToChest: { name: "Knees-to-Chest", time: "30 sec", muscle: "Lower back · glutes", how: "Lie on your back and pull both knees toward your chest, forearms hooked behind the knees instead of gripping. Relaxes the lower back after the RDL and rack pull." },
+};
+
 const DAYS = {
   Push: {
     short: "Push",
-    label: "Mon · Push — Chest, shoulders, triceps (~55 min)",
+    label: "Mon · Push — Chest, shoulders, triceps (~60 min)",
     warmup: ["Band Pull-Apart 1×20", "Band External Rotation 1×12/side", "Arm Circles + Shoulder CARs 1×10 each way", "1–2 light ramp-up sets on the Incline Press"],
+    cooldown: [STRETCHES.chest, STRETCHES.crossBody, STRETCHES.tricep],
     exercises: [
       { name: "Incline Press Machine", muscle: "Chest (upper) · front delts, triceps", target: "4×6–8", rest: "2 min", key: true,
         execution: "Heaviest press of the week, done first. The machine removes the left-hand stabilising demand. Add weight once ALL 4 sets hit 8." },
@@ -244,8 +262,9 @@ const DAYS = {
   },
   Pull: {
     short: "Pull",
-    label: "Tue · Pull — Back, rear delts, biceps (~58 min)",
+    label: "Tue · Pull — Back, rear delts, biceps (~63 min)",
     warmup: ["Scapular Pulldown (light, straps) 1×12", "Band Face Pull 1×15", "Dead Hang (assisted) 1×20 sec"],
+    cooldown: [STRETCHES.childsPose, STRETCHES.biceps, STRETCHES.crossBody, STRETCHES.forearm],
     exercises: [
       { name: "Lat Pulldown (wide, straps)", muscle: "Back (lats) · upper back, biceps", target: "4×6–8", rest: "2 min", key: true,
         execution: "Heaviest vertical pull of the week, done first. Straps on BOTH hands so grip never limits the load. Bar to collarbone, elbows down and back. Add weight once ALL 4 sets hit 8. LAST SET STRAPLESS at ~60–70% of working weight, to grip failure — log that weight separately." },
@@ -265,8 +284,9 @@ const DAYS = {
   },
   Legs: {
     short: "Legs",
-    label: "Wed · Legs — V-squat + unilateral leg (~54 min)",
+    label: "Wed · Legs — V-squat + unilateral leg (~59 min)",
     warmup: ["90/90 Hip Rotations 1×8/side", "Bodyweight Squat 1×10", "Ankle Rocks 1×10/side"],
+    cooldown: [STRETCHES.benchQuad, STRETCHES.hamstring, STRETCHES.calf, STRETCHES.butterfly],
     exercises: [
       { name: "V-Squat Machine", muscle: "Quads · glutes, adductors", target: "4×6–8", rest: "2 min", key: true, isNew: true,
         execution: "v8.1 — replaces Smith Machine Squat. Shoulder pads carry the load, so the left hand does nothing, and the back support removes balance as a limiter. Feet shoulder-width, mid-platform; sit back and down as deep as you can while keeping your lower back on the pad. Push evenly through both feet and watch that the left knee tracks over the toes. First session: find a working weight that leaves ~2 reps in reserve — the numbers won't match your Smith squat. Add weight once ALL 4 sets hit 8." },
@@ -288,8 +308,9 @@ const DAYS = {
   },
   Upper: {
     short: "Upper",
-    label: "Fri · Upper — Horizontal pull + press, arms (~58 min)",
+    label: "Fri · Upper — Horizontal pull + press, arms (~63 min)",
     warmup: ["Band Pull-Apart 1×20", "Band Face Pull 1×15", "Band External Rotation 1×12/side"],
+    cooldown: [STRETCHES.chest, STRETCHES.childsPose, STRETCHES.crossBody, STRETCHES.tricep],
     exercises: [
       { name: "Seated Cable Row / Machine High Row (straps)", muscle: "Back (mid back, lats) · rear delts, biceps", target: "4×6–8", rest: "2 min", key: true,
         execution: "Pick one machine and stick with it for the whole block. Retract the shoulder blades FIRST, then pull with the elbows. Chest up, no rocking. Add weight once ALL 4 sets hit 8. LAST SET STRAPLESS at ~60–70%, to grip failure — log it separately." },
@@ -309,8 +330,9 @@ const DAYS = {
   },
   Lower: {
     short: "Lower",
-    label: "Sat · Lower — Hinge, posterior chain (~50 min)",
+    label: "Sat · Lower — Hinge, posterior chain (~55 min)",
     warmup: ["90/90 Hip Rotations 1×8/side", "Broomstick Hip Hinge 1×10", "Glute Bridge 1×15"],
+    cooldown: [STRETCHES.hamstring, STRETCHES.figure4, STRETCHES.hipFlexor, STRETCHES.kneesToChest],
     exercises: [
       { name: "Romanian Deadlift (Smith, straps)", muscle: "Hamstrings · glutes, lower back", target: "4×6–8", rest: "2 min", key: true,
         execution: "Hinge, don't squat — push the hips back, soft knees, bar stays close. Add weight once ALL 4 sets hit 8." },
@@ -1081,6 +1103,24 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
                 </div>
               );
             })}
+
+            {DAYS[day].cooldown && (
+              <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 12, padding: "10px 14px" }}>
+                <div style={{ fontSize: 10.5, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>
+                  Post-workout stretch · ~5 min · not logged
+                </div>
+                <div style={{ fontSize: 11.5, color: C.muted, lineHeight: 1.45, marginBottom: 6 }}>{STRETCH_RULE}</div>
+                {DAYS[day].cooldown.map((st) => (
+                  <div key={st.name} style={{ padding: "7px 0", borderTop: `1px solid ${C.cardBorder}` }}>
+                    <div style={{ fontSize: 12.5, color: C.text, fontWeight: 700 }}>
+                      {st.name}<span style={{ color: C.muted, fontWeight: 400 }}>{"  ·  "}{st.time}</span>
+                    </div>
+                    <div style={{ fontSize: 11, color: C.blue, fontWeight: 600, marginTop: 1 }}>{st.muscle}</div>
+                    <div style={{ fontSize: 11.5, color: C.muted, lineHeight: 1.45, marginTop: 2 }}>{st.how}</div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div style={{ background: C.dangerSoft, border: `1px solid ${C.danger}`, borderRadius: 12, padding: "12px 14px", fontSize: 11.5, color: "#E8B79C", lineHeight: 1.5 }}>
               {STOP_RULE}
