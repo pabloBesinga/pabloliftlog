@@ -79,6 +79,7 @@ const Archive = ({ size, color }) => <Ic size={size} color={color}>🗄</Ic>;
 const Utensils = ({ size, color }) => <Ic size={size} color={color}>🍽</Ic>;
 const Scale = ({ size, color }) => <Ic size={size} color={color}>⚖</Ic>;
 const Flag = ({ size, color }) => <Ic size={size} color={color}>🏁</Ic>;
+const Runner = ({ size, color }) => <Ic size={size} color={color}>🏃</Ic>;
 
 // ---- Palette ----
 const C = {
@@ -97,7 +98,7 @@ const C = {
   dangerSoft: "#2A1D18",
 };
 
-// ============================ PLAN DATA (v8.2 PPLUL — 3 Oct 2026 · scan data 29 Sep) ============================
+// ============================ PLAN DATA (v8.3 PPLUL + Run — 8 Nov 2026 · scan data 29 Sep) ============================
 
 const RUN_DAY_INDEXES = []; // v8: no scheduled runs (race off) — use the Run day toggle manually if you do a long run
 const LEGACY_DAY_NAMES = { UpperA: "Upper A", LowerA: "Lower A", UpperB: "Upper B", LowerB: "Lower B" }; // pre-v8 sessions
@@ -354,66 +355,129 @@ const DAYS = {
   },
 };
 
-const RUN_PLAN = [
-  { wk: 1, start: "2026-08-24", end: "2026-08-30",
-    wed: "20 min total. 5 min easy warm-up, then 6 × 30 sec uphill push with a full walk back down between each, then 5 min easy.",
-    sat: "3.0 km continuous, easy, flat. Don't race it. If you have to walk a section, walk it — finishing the distance is the point this week.",
-    goal: "Establish the habit. Zero soreness target." },
-  { wk: 2, start: "2026-08-31", end: "2026-09-06",
-    wed: "22 min. Same structure, 8 × 30 sec uphill push.",
-    sat: "3.5 km continuous, easy. Same route as week 1 if you can — it makes progress obvious.",
-    goal: "Same effort, more work. Should feel easier than week 1." },
-  { wk: 3, start: "2026-09-07", end: "2026-09-13",
-    wed: "25 min. 6 × 60 sec hill at a hard-but-controlled effort, walk down to recover.",
-    sat: "4.0 km. Run the last 1 km noticeably harder than the first 3.",
-    goal: "First real intensity. Some leg soreness Thursday is fine." },
-  { wk: 4, start: "2026-09-14", end: "2026-09-20",
-    wed: "25 min. 8 × 60 sec hill.",
-    sat: "5.0 km. Break it up: run 1 km, 100 m sandbag or backpack carry, repeat. First taste of the race pattern.",
-    goal: "Race distance reached. Carries introduced. Wear your race shoes from here." },
-  { wk: 5, start: "2026-09-21", end: "2026-09-27",
-    wed: "25 min. 6 × 90 sec hill — longer intervals, same total work.",
-    sat: "5.0 km + full obstacle simulation: 2 × 100 m carry, 2 × 20 m bear crawl, 2 × 30 burpees split across the run.",
-    goal: "Dress rehearsal. Record your total time — this is your benchmark." },
-  { wk: 6, start: "2026-09-28", end: "2026-10-04",
-    wed: "PEAK WEEK. 22 min. 8 × 45 sec hard hill with short recovery.",
-    sat: "6.0 km with carries plus 60 burpees split into 2 sets of 30. The hardest session of the block.",
-    goal: "Deliberately harder than race day, so race day feels easier.", peak: true },
-  { wk: 7, start: "2026-10-05", end: "2026-10-11",
-    wed: "TAPER. 15 min easy + 4 × 20 sec relaxed strides. Nothing hard.",
-    sat: "RACE DAY. If your race is later in October, do a 3 km easy shakeout and repeat this taper week until race week.",
-    goal: "Arrive fresh. Doing less now costs you nothing.", taper: true },
+// v8.3 — 5K sub-30 plan. Runs sit on top of PPLUL: Mon key (after Push), Thu easy, Sun long & slow.
+const RUN_START = "2026-11-09"; // Monday of Week 1
+const RUN_GOAL = { label: "5K under 30:00", date: "2027-05-09", pace: "6:00/km" };
+const RUN_BASELINE = { date: "2026-11-05", km: 3.28, time: "40:50", pace: "12:27/km", note: "run/walk" };
+const RUN_SLOTS = [
+  { key: "mon", dow: 1, label: "MONDAY", tag: "Key", color: "amber" },
+  { key: "thu", dow: 4, label: "THURSDAY", tag: "Easy", color: "blue" },
+  { key: "sun", dow: 0, label: "SUNDAY", tag: "Long & slow", color: "green" },
 ];
+const RUN_PHASES = {
+  1: { name: "Run/walk base", note: "Walking is the plan. Every run is talking pace." },
+  2: { name: "Continuous running", note: "Build to 30 min non-stop. Monday adds strides from Week 10." },
+  3: { name: "Get faster", note: "Monday becomes race-pace intervals. Thu and Sun stay easy." },
+  4: { name: "Race-specific", note: "Longer race-pace reps, then taper into the attempt." },
+};
+const RUN_WEEKS = [
+  { wk: 1, ph: 1, mon: "8 × (run 1 min / walk 2 min)", thu: "Same as Monday", sun: "Same as Monday", note: "Total ~24 min. Slow enough to talk." },
+  { wk: 2, ph: 1, mon: "8 × (run 1:30 / walk 2 min)", thu: "Same as Monday", sun: "Same as Monday" },
+  { wk: 3, ph: 1, mon: "6 × (run 2 min / walk 1:30)", thu: "Same as Monday", sun: "Same as Monday" },
+  { wk: 4, ph: 1, mon: "Repeat Week 3", thu: "Repeat Week 3", sun: "Repeat Week 3", note: "Consolidation week. Let your shins and calves catch up." },
+  { wk: 5, ph: 1, mon: "5 × (run 3 min / walk 1:30)", thu: "5 × (run 3 / walk 1:30)", sun: "6 × (run 3 / walk 1:30)" },
+  { wk: 6, ph: 1, mon: "4 × (run 5 min / walk 1:30)", thu: "4 × (run 5 / walk 1:30)", sun: "4 × (run 5 / walk 1:30)", note: "Last run/walk week." },
+  { wk: 7, ph: 2, mon: "2 × (run 10 min / walk 1:30)", thu: "2 × (run 8 / walk 1:30)", sun: "2 × (run 12 / walk 1:30)", note: "Christmas week — any order is fine." },
+  { wk: 8, ph: 2, mon: "2 × (run 10 min / walk 1:30)", thu: "15 min continuous", sun: "2 × (run 12 / walk 1:30)", note: "New Year week. Consolidation." },
+  { wk: 9, ph: 2, mon: "20 min continuous", thu: "15 min", sun: "22 min", note: "First 20 min without walking. Huge milestone." },
+  { wk: 10, ph: 2, mon: "20 min + 4 × 15 s strides", thu: "18 min", sun: "25 min", note: "Strides: smooth, quick, ~80% effort, walk back between." },
+  { wk: 11, ph: 2, mon: "22 min + 6 × 15 s strides", thu: "20 min", sun: "28 min" },
+  { wk: 12, ph: 2, mon: "20 min + 4 strides", thu: "15 min", sun: "5K TIME TRIAL #1", note: "Benchmark. Run/walk allowed. Expect ~35–38 min. Log it.", tt: true },
+  { wk: 13, ph: 3, mon: "6 × 400 m @ 6:00/km, 2 min walk between", thu: "20 min", sun: "30 min", note: "400 m at 6:00/km = 2:24. This is race pace — learn how it feels." },
+  { wk: 14, ph: 3, mon: "8 × 400 m @ 6:00/km, 2 min walk", thu: "22 min", sun: "32 min" },
+  { wk: 15, ph: 3, mon: "5 × 600 m @ 6:00/km, 2 min walk", thu: "25 min", sun: "35 min", note: "600 m = 3:36." },
+  { wk: 16, ph: 3, mon: "20 min + 6 strides", thu: "20 min", sun: "25 min", note: "Lighter week. Recover.", light: true },
+  { wk: 17, ph: 3, mon: "4 × 800 m @ 6:00/km, 2 min walk", thu: "25 min", sun: "38 min", note: "800 m = 4:48." },
+  { wk: 18, ph: 3, mon: "3 × 1 km @ 6:05/km, 2 min walk", thu: "25 min", sun: "40 min" },
+  { wk: 19, ph: 3, mon: "2 × 8 min @ 6:30/km, 2 min walk", thu: "28 min", sun: "42 min", note: "Tempo: comfortably hard, a few words at a time." },
+  { wk: 20, ph: 3, mon: "20 min + 4 strides", thu: "20 min", sun: "5K TIME TRIAL #2", note: "Run it continuously. On track if 32:30 or faster.", tt: true },
+  { wk: 21, ph: 4, mon: "4 × 1 km @ 6:00/km, 90 s walk", thu: "28 min", sun: "45 min" },
+  { wk: 22, ph: 4, mon: "3 × 1.5 km @ 6:00/km, 2 min walk", thu: "30 min", sun: "45 min", note: "1.5 km = 9:00." },
+  { wk: 23, ph: 4, mon: "20 min tempo @ 6:15/km", thu: "30 min", sun: "48 min", note: "Longest steady effort of the plan." },
+  { wk: 24, ph: 4, mon: "5 × 400 m @ 5:45/km, 2 min walk", thu: "25 min", sun: "35 min", note: "Lighter week. Sharp, not tired.", light: true },
+  { wk: 25, ph: 4, mon: "2 × 2 km @ 5:55/km, 2 min walk", thu: "25 min", sun: "40 min", note: "Last hard session. 2 km = 11:50." },
+  { wk: 26, ph: 4, mon: "4 × 400 m @ 5:50/km, 2 min walk", thu: "15 min + 4 strides", sun: "5K SUB-30 ATTEMPT", note: "Taper. Start at 6:00/km, not faster. Speed up only after 4 km.", tt: true },
+];
+const RUN_RULES = [
+  ["Every run", "5 min brisk walk before, 5 min walk after. Not counted in the session times."],
+  ["Easy means easy", "Thursday, Sunday and all of Phase 1–2: you can speak full sentences. If not, slow down or walk. Ignore pace on easy days — 8:00–9:00/km at first is normal."],
+  ["Only Monday is fast", "Strides from Week 10, intervals from Week 13. That's the only session where pace matters. Can't hit the pace? Run it hard-but-controlled and repeat the week."],
+  ["Repeat, don't skip", "If a week feels too hard, do it again. Skipping ahead is how beginners get shin splints."],
+  ["Pain rule", "Soreness is fine. Sharp or one-sided pain in shin, knee, foot or Achilles, or pain that worsens while running → stop, walk home, 2–3 days off running (lifting is fine), restart at the previous week."],
+  ["Lifting comes first", "Run Monday after Push, or at a separate time. If Wed or Sat leg lifts drop two sessions in a row, make that week's Sunday run a walk."],
+  ["Heat & steps", "Run early or after 5 PM. Bring water on anything over 30 min. Runs count toward your 10k steps."],
+];
+const RUN_SESSION_TYPES = ["Key (Mon)", "Easy (Thu)", "Long (Sun)", "Time trial", "Extra"];
 
-const OBSTACLES = [
-  { tier: "green", title: "NO GRIP NEEDED — these are yours", color: C.green,
-    items: [
-      { name: "Bucket Carry", how: "Wrap both arms fully around the bucket and hug it high on your chest. Short fast steps, don't lean back. Usually the hardest obstacle on the course for most people — and it never touches your hands." },
-      { name: "Sandbag Carry", how: "Shoulder it on your RIGHT side and clamp with the right arm. Left hand steadies only." },
-      { name: "Atlas Carry", how: "Hug the stone, squat to lift with a flat back, walk it, set it down, 5 burpees, carry it back." },
-      { name: "Barbed Wire Crawl", how: "Roll sideways rather than army-crawling wherever the ground allows — faster and far less tiring. Head down." },
-      { name: "Spear Throw", how: "Throw right-handed. Grip at the balance point, step through, follow through at the target. Practise this — most people fail on technique, not strength." },
-      { name: "Cargo Net (A-frame / vertical)", how: "Your FEET do the work, hands only guide. Step on the vertical ropes near the knots, not the horizontals. Three points of contact." },
-      { name: "Over-Under-Through Walls", how: "Over: plant a foot, drive up with the leg. Under: roll. Through: sit and swing your legs through." },
-      { name: "Inverted Wall", how: "Get your heel over the top edge first, then let your leg pull you. Don't try to muscle it with your arms." },
-      { name: "Fire Jump / Dunk Wall", how: "Straight run and jump; duck and exhale through the nose. Cold shock is the only real challenge." },
-    ] },
-  { tier: "amber", title: "GRIP HELPS, BUT THERE'S A TECHNIQUE — attempt every one", color: C.amber,
-    items: [
-      { name: "Hercules Hoist", how: "Wrap the rope around your forearm and around your body, then SIT BACK and use your bodyweight — don't pull hand-over-hand. Control the descent or you get a penalty. Genuinely attemptable for you." },
-      { name: "Rope Climb", how: "Use the S-hook or J-hook foot lock. Done right, your feet carry about 70% of the load and your hands mostly stabilise. Learn the foot lock on the ground first." },
-      { name: "Plate Drag", how: "Rope again — wrap it around your forearm, sit back, walk backwards. Very little finger grip needed." },
-      { name: "Slip Wall", how: "Rope-assisted. Wrap the rope, run at the wall, let your legs do the climbing. Get your foot high early." },
-      { name: "Stairway to Sparta", how: "A big wall with a ladder-ish top. Foot placement first, hands second." },
-    ] },
-  { tier: "red", title: "HEAVY GRIP — attempt anyway, but budget the burpees", color: C.danger,
-    items: [
-      { name: "Monkey Bars", how: "Attempt it — falling costs you nothing but the burpees you were going to do anyway. Go fast and swing; hanging static is what kills grip. If the left slips, you have your answer and you move on." },
-      { name: "Multi-Rig", how: "Same approach. Momentum, not static hanging." },
-      { name: "Olympus (traverse wall)", how: "Grip-and-hold on a slanted wall. Realistically a burpee obstacle for you right now." },
-      { name: "Twister / Z-Wall", how: "Lateral hanging traverse. Same call." },
-    ] },
+// ---- Speed guide (v8.3.1) — HR is the main guide, pace is a rough hint. Zones from COROS, max HR 193. ----
+const RUN_HR_MAX = 193;
+const COROS_ZONES = [
+  { name: "Recovery", range: "< 97", color: "#5B8FC9" },
+  { name: "Warm Up", range: "97–116", color: "#5BC0C9" },
+  { name: "Fat Burn", range: "117–135", color: "#5CA37A" },
+  { name: "Aerobic", range: "136–154", color: "#D9B44A" },
+  { name: "Threshold", range: "155–174", color: "#C98A3C" },
+  { name: "Anaerobic", range: "> 174", color: "#C9603C" },
 ];
+// Easy pace drifts faster as you get fitter. Rough ranges per phase — if HR says slow down, HR wins.
+const EASY_PACE_BY_PHASE = { 1: "10:30–12:30", 2: "9:30–11:00", 3: "8:45–10:00", 4: "8:15–9:30" };
+const SPEED_GUIDE = {
+  runwalk: { name: "Run/walk", color: "green", hr: "Run bits under 150 · walk until ~125", zone: "Fat Burn → low Aerobic",
+    pace: (ph) => EASY_PACE_BY_PHASE[ph] + "/km on the run bits", feel: "You could chat the whole time. Breathing through the nose is a good sign.",
+    cue: "If HR passes 150 before the run bit ends, walk early. Slower than you think is right." },
+  easy: { name: "Easy run", color: "blue", hr: "120–145 bpm", zone: "Fat Burn → low Aerobic",
+    pace: (ph) => EASY_PACE_BY_PHASE[ph] + "/km", feel: "Full sentences, no gasping. Could keep going much longer.",
+    cue: "HR over 150 → slow down or walk 30 s, then carry on. Hills: walk them if HR jumps." },
+  long: { name: "Long & slow", color: "green", hr: "120–145 bpm", zone: "Fat Burn → low Aerobic",
+    pace: (ph) => EASY_PACE_BY_PHASE[ph] + "/km (or slower)", feel: "Same as easy — even slower is fine. Time on feet is the point, not speed.",
+    cue: "HR creeps up late in the run (heat) — that's normal. Slow down to keep it under ~150." },
+  strides: { name: "Strides", color: "amber", hr: "Ignore HR (too short)", zone: "—",
+    pace: () => "~5:30–6:00/km feel", feel: "Fast and smooth, ~80% effort. Relaxed face, quick feet. Not a sprint.",
+    cue: "Do them at the END of the easy run. Walk back fully between each one." },
+  intervals: { name: "Intervals", color: "amber", hr: "Climbs to 155–174 by the last reps", zone: "Threshold",
+    pace: () => "The pace written in the session (e.g. @ 6:00/km)", feel: "Hard but controlled. You can say a few words, not a sentence. Last rep should feel like you had one more in you.",
+    cue: "Watch PACE, not HR — HR lags on short reps. Walk recoveries fully. Can't hold the pace? Finish at hard-but-controlled and repeat the week." },
+  tempo: { name: "Tempo", color: "amber", hr: "~155–170 bpm", zone: "Threshold",
+    pace: () => "The pace written in the session (6:15–6:30/km)", feel: "Comfortably hard. Short phrases only. Steady the whole way — not getting faster.",
+    cue: "First 2 min will feel easy — don't speed up. If HR goes over 172, ease off a bit." },
+  timetrial: { name: "Time trial / race", color: "danger", hr: "Ignore until the last km", zone: "Threshold → Anaerobic",
+    pace: (ph, wk) => wk >= 26 ? "6:00/km from the start" : wk >= 20 ? "~6:30/km first 2 km, then push" : "Start at your easy-run effort, push the last 2 km",
+    feel: "Even first half, then hang on. The last 1 km is where you empty the tank.",
+    cue: "Starting too fast is the #1 mistake. First km should feel almost too easy." },
+};
+function sessionKinds(text, slotKey) { // what a session's text asks for → guide keys
+  const t = String(text || "");
+  if (/TRIAL|ATTEMPT/.test(t)) return ["timetrial"];
+  if (/tempo/i.test(t) || /×\s*8 min @/.test(t)) return ["tempo"];
+  if (/\d\s*(m|km) @/.test(t)) return ["intervals"];
+  const base = /walk/.test(t) && /run/.test(t) ? "runwalk" : slotKey === "sun" ? "long" : "easy";
+  return /strides/.test(t) ? [base, "strides"] : [base];
+}
+function resolveSessionText(week, slotKey) { // "Same as Monday" / "Repeat Week 3" → the real session
+  const t = week[slotKey];
+  if (t === "Same as Monday") return week.mon;
+  const m = /^Repeat Week (\d+)/.exec(t);
+  if (m) { const w = RUN_WEEKS.find((x) => x.wk === Number(m[1])); if (w) return resolveSessionText(w, slotKey); }
+  return t;
+}
+const EASY_TYPES = ["Easy (Thu)", "Long (Sun)"];
+
+function runWeekIndex(iso) {
+  const d = daysBetween(RUN_START, iso);
+  return d < 0 ? -1 : Math.floor(d / 7); // 0-based
+}
+function parseDuration(str) { // "mm:ss" or "h:mm:ss" → seconds
+  const parts = String(str || "").trim().split(":").map((p) => p.trim());
+  if (parts.length < 2 || parts.length > 3 || parts.some((p) => p === "" || isNaN(Number(p)))) return null;
+  const n = parts.map(Number);
+  const secs = parts.length === 3 ? n[0] * 3600 + n[1] * 60 + n[2] : n[0] * 60 + n[1];
+  return secs > 0 ? secs : null;
+}
+function fmtDuration(secs) {
+  const s = Math.round(secs), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
+  return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}` : `${m}:${String(r).padStart(2, "0")}`;
+}
+function fmtPace(secs, km) { return km > 0 ? fmtDuration(secs / km) + "/km" : "–"; }
 
 const PROGRESSION_RULES = [
   "Trigger-based, not calendar-based — add weight when the rep target is met, not because a week passed.",
@@ -428,11 +492,11 @@ const PROGRESSION_RULES = [
   "You're in a deficit, so recovery is taxed. Reps drop two sessions running on the same weight → hold the weight. Two weeks running → deload 10% for one week.",
 ];
 
-const STOP_RULE = "STOP RULE: if your gait changes, your left side feels heavy or numb, your vision changes, or you get an unusual headache — stop the session. That's a medical signal, not a toughness test. Heat and hard exertion are the two conditions most likely to surface a problem, and the race has both. Get your doctor's sign-off on race participation specifically before October.";
+const STOP_RULE = "STOP RULE: if your gait changes, your left side feels heavy or numb, your vision changes, or you get an unusual headache — stop the session. That's a medical signal, not a toughness test. Heat and hard exertion are the two conditions most likely to surface a problem, and running in Laguna heat has both. Get your doctor's OK for the running plan before the faster Monday sessions start (Week 13, Feb 2027).";
 
 // ============================ HELPERS ============================
 
-function todayISO() { return new Date().toISOString().slice(0, 10); }
+function todayISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; } // local date (was UTC — early-morning PH logs landed on the previous day)
 function emptySetRow() { return { reps: "", weight: "" }; }
 
 function mondayOf(dateStr) {
@@ -500,7 +564,7 @@ function WeightChart({ data, target }) {
 }
 
 function LiftLog() {
-  const [view, setView] = useState("log"); // log | week | history | food | body | race
+  const [view, setView] = useState("log"); // log | week | history | food | body | run
   const [day, setDay] = useState("Push");
   const [entries, setEntries] = useState({});
   const [openEx, setOpenEx] = useState(() => new Set(DAYS.Push.exercises.map((e) => e.name)));
@@ -542,7 +606,13 @@ function LiftLog() {
   const [weightInput, setWeightInput] = useState("");
   const [savingWeight, setSavingWeight] = useState(false);
   const [openAudit, setOpenAudit] = useState(null);
-  const [openTier, setOpenTier] = useState("green");
+  const [openRunWeek, setOpenRunWeek] = useState(null);
+  const [showRunRules, setShowRunRules] = useState(false);
+  const [showSpeedGuide, setShowSpeedGuide] = useState(false);
+  const [runs, setRuns] = useState([]);
+  const [runForm, setRunForm] = useState(() => ({ date: todayISO(), type: "", km: "", time: "", hr: "", rpe: "", notes: "" }));
+  const [savingRun, setSavingRun] = useState(false);
+  const [runMsg, setRunMsg] = useState("");
   const [showRules, setShowRules] = useState(false);
 
   const target = dayMode === "run" ? NUTRITION.runTarget : NUTRITION.liftTarget;
@@ -659,6 +729,57 @@ function LiftLog() {
     await window.storage.set("weight-log", JSON.stringify(next), false).catch(() => {});
     setWeights(next);
   };
+
+  // ---- Run log (v8.3) ----
+  const loadRuns = useCallback(async () => {
+    try {
+      const res = await window.storage.get("run-log", false).catch(() => null);
+      const arr = res ? JSON.parse(res.value) : [];
+      arr.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+      setRuns(arr);
+    } catch (e) { setRuns([]); }
+  }, []);
+  useEffect(() => { loadRuns(); }, [loadRuns]);
+
+  const defaultRunType = (iso) => {
+    const dow = new Date(iso + "T00:00:00").getDay();
+    return dow === 1 ? "Key (Mon)" : dow === 4 ? "Easy (Thu)" : dow === 0 ? "Long (Sun)" : "Extra";
+  };
+
+  const saveRun = async () => {
+    const km = parseFloat(runForm.km);
+    const secs = parseDuration(runForm.time);
+    if (!km || km <= 0 || km > 60) { setError("Enter the distance in km (e.g. 3.28)."); return; }
+    if (!secs) { setError("Enter the time as mm:ss or h:mm:ss (e.g. 40:50)."); return; }
+    setSavingRun(true); setError(""); setRunMsg("");
+    try {
+      const entry = {
+        id: Date.now(), date: runForm.date || todayISO(), type: runForm.type || defaultRunType(runForm.date || todayISO()),
+        km: Math.round(km * 100) / 100, secs,
+        hr: runForm.hr ? parseInt(runForm.hr, 10) : null, rpe: runForm.rpe ? parseInt(runForm.rpe, 10) : null,
+        notes: runForm.notes.trim(),
+      };
+      const next = runs.concat([entry]).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+      await window.storage.set("run-log", JSON.stringify(next), false);
+      setRuns(next);
+      setRunForm({ date: todayISO(), type: "", km: "", time: "", hr: "", rpe: "", notes: "" });
+      setRunMsg(`Saved · ${entry.km} km · ${fmtDuration(secs)} · ${fmtPace(secs, entry.km)}`);
+    } catch (e) { setError("Couldn't save that run."); }
+    finally { setSavingRun(false); }
+  };
+
+  const deleteRun = async (id) => {
+    const next = runs.filter((r) => r.id !== id);
+    await window.storage.set("run-log", JSON.stringify(next), false).catch(() => {});
+    setRuns(next);
+  };
+
+  const runWkIdx = runWeekIndex(todayISO());
+  const runWeekNow = RUN_WEEKS[Math.min(Math.max(runWkIdx, 0), RUN_WEEKS.length - 1)];
+  const runPlanDone = runWkIdx >= RUN_WEEKS.length;
+  const todayDow = new Date(todayISO() + "T00:00:00").getDay();
+  const todayRunSlot = RUN_SLOTS.find((s) => s.dow === todayDow);
+  const todayRun = !runPlanDone && runWkIdx >= 0 && todayRunSlot ? runWeekNow[todayRunSlot.key] : null;
 
   // 7-day rolling averages
   const t = todayISO();
@@ -979,20 +1100,35 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
     </div>
   );
 
+  const GuideChip = ({ kind, ph, wk, compact }) => {
+    const g = SPEED_GUIDE[kind];
+    const col = C[g.color] || C.text;
+    return (
+      <div style={{ marginTop: 5, background: C.bg, border: `1px solid ${C.cardBorder}`, borderLeft: `3px solid ${col}`, borderRadius: 8, padding: "6px 9px" }}>
+        <div style={{ fontSize: 11, lineHeight: 1.45 }}>
+          <b style={{ color: col }}>🎯 {g.name}</b>
+          <span style={{ color: C.text }}> · ❤️ {g.hr}</span>
+          <span style={{ color: C.muted }}> · ⏱ {g.pace(ph, wk)}</span>
+        </div>
+        {!compact && <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.45, marginTop: 2 }}>{g.feel}</div>}
+      </div>
+    );
+  };
+
   return (
     <div style={{ background: C.bg, color: C.text, fontFamily: fontStack, minHeight: "100%", paddingBottom: view === "log" ? 96 : 32 }} className="w-full">
       {/* Header */}
       <div className="px-5 pt-6 pb-3" style={{ borderBottom: `1px solid ${C.cardBorder}` }}>
         <div className="flex items-baseline justify-between">
           <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Lift Log</div>
-          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.2 · PPLUL</div>
+          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.3.1 · PPLUL + RUN</div>
         </div>
         <div style={{ fontSize: 12, color: C.muted, marginTop: 2, marginBottom: 12 }}>
           {view === "log" ? "Log today's sets"
             : view === "history" ? "Session history"
             : view === "food" ? "Nutrition & food log"
             : view === "body" ? "Weight trend & body composition"
-            : view === "race" ? "Run plan & obstacle strategy"
+            : view === "run" ? "5K sub-30 plan & run log"
             : "Weekly summary"}
         </div>
         <div className="flex gap-1.5" style={{ marginBottom: 6 }}>
@@ -1003,6 +1139,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
         <div className="flex gap-1.5">
           <TabButton id="food" icon={Utensils} label="Food" />
           <TabButton id="body" icon={Scale} label="Body" />
+          <TabButton id="run" icon={Runner} label="Run" />
         </div>
       </div>
 
@@ -1027,6 +1164,13 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
             ))}
           </div>
           <div className="px-5 pt-1 pb-2" style={{ fontSize: 12, color: C.muted }}>{DAYS[day].label}</div>
+          {todayRun && (
+            <button onClick={() => setView("run")} className="mx-5 mb-2 text-left" style={{ display: "block", width: "calc(100% - 40px)", background: C.blueSoft, border: `1px solid ${C.blue}`, borderRadius: 10, padding: "9px 12px" }}>
+              <div style={{ fontSize: 10.5, color: C.blue, fontWeight: 800, letterSpacing: "0.04em" }}>🏃 TODAY'S RUN · WEEK {runWeekNow.wk} · {todayRunSlot.tag.toUpperCase()}</div>
+              <div style={{ fontSize: 12.5, marginTop: 2 }}>{resolveSessionText(runWeekNow, todayRunSlot.key)}</div>
+              {sessionKinds(resolveSessionText(runWeekNow, todayRunSlot.key), todayRunSlot.key).map((k) => <GuideChip key={k} kind={k} ph={runWeekNow.ph} wk={runWeekNow.wk} compact />)}
+            </button>
+          )}
 
           {DAYS[day].warmup && (
             <div className="px-5 pb-1">
@@ -1166,6 +1310,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
               <div><div style={{ fontSize: 22, fontWeight: 800 }}>{weekAgg.totalVolume.toLocaleString()}</div><div style={{ fontSize: 11, color: C.muted }}>kg volume</div></div>
               <div><div style={{ fontSize: 22, fontWeight: 800 }}>{weekAgg.totalSets}</div><div style={{ fontSize: 11, color: C.muted }}>sets</div></div>
               <div><div style={{ fontSize: 22, fontWeight: 800 }}>{weekAgg.sessionsCount}</div><div style={{ fontSize: 11, color: C.muted }}>sessions</div></div>
+              <div><div style={{ fontSize: 22, fontWeight: 800, color: C.blue }}>{runs.filter((r) => r.date >= currentWeekMonday && r.date <= currentWeekSunday).length}/3</div><div style={{ fontSize: 11, color: C.muted }}>runs</div></div>
             </div>
             {Object.keys(weekAgg.perExercise).length > 0 && (
               <div className="mt-4">
@@ -1411,72 +1556,244 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
             </div>
           </Card>
         </div>
-      ) : view === "race" ? (
+      ) : view === "run" ? (
         <div className="px-5 pt-4 flex flex-col gap-4">
+          {/* Goal */}
           <Card accent={C.blue}>
-            <Eyebrow color={C.blue}>Spartan Sprint · 5 km · ~20 obstacles · October 2026</Eyebrow>
-            <div style={{ fontSize: 12.5, lineHeight: 1.55 }}>
-              Wednesday is short and sharp, Saturday is longer and steady. Every easy portion is capped at RPE 4–5 — if you can't hold a conversation, you're running too fast for the purpose of the session.
+            <Eyebrow color={C.blue}>Goal · {RUN_GOAL.label} · {fmtShort(RUN_GOAL.date)} 2027</Eyebrow>
+            <div className="flex gap-6">
+              <div><div style={{ fontSize: 20, fontWeight: 800 }}>{runWkIdx < 0 ? "–" : runPlanDone ? "Done" : `${runWeekNow.wk}/26`}</div><div style={{ fontSize: 11, color: C.muted }}>week</div></div>
+              <div><div style={{ fontSize: 20, fontWeight: 800 }}>{RUN_GOAL.pace}</div><div style={{ fontSize: 11, color: C.muted }}>race pace</div></div>
+              <div><div style={{ fontSize: 20, fontWeight: 800 }}>{runs.length}</div><div style={{ fontSize: 11, color: C.muted }}>runs logged</div></div>
+            </div>
+            <div style={{ fontSize: 11.5, color: C.muted, marginTop: 10, lineHeight: 1.5 }}>
+              Baseline {fmtShort(RUN_BASELINE.date)}: {RUN_BASELINE.km} km · {RUN_BASELINE.time} · {RUN_BASELINE.pace} ({RUN_BASELINE.note}). Mon = key session after Push · Thu = easy · Sun = long &amp; slow.
             </div>
           </Card>
 
-          {RUN_PLAN.map((w) => {
-            const isCurrent = todayISO() >= w.start && todayISO() <= w.end;
-            const accent = w.peak ? C.amber : w.taper ? C.green : isCurrent ? C.blue : C.cardBorder;
-            return (
-              <Card key={w.wk} accent={accent}>
-                <div className="flex items-center justify-between" style={{ marginBottom: 8 }}>
-                  <div style={{ fontSize: 14.5, fontWeight: 800 }}>
-                    Week {w.wk}
-                    {isCurrent && <span style={{ marginLeft: 8, fontSize: 9.5, color: C.blue, fontWeight: 800, letterSpacing: "0.04em" }}>THIS WEEK</span>}
-                    {w.peak && <span style={{ marginLeft: 8, fontSize: 9.5, color: C.amber, fontWeight: 800 }}>PEAK</span>}
-                    {w.taper && <span style={{ marginLeft: 8, fontSize: 9.5, color: C.green, fontWeight: 800 }}>TAPER</span>}
+          {/* This week */}
+          {!runPlanDone && (
+            <Card accent={runWeekNow.tt ? C.amber : C.cardBorder}>
+              <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
+                <div style={{ fontSize: 14.5, fontWeight: 800 }}>
+                  {runWkIdx < 0 ? "Starts Monday · Week 1" : `This week · Week ${runWeekNow.wk}`}
+                </div>
+                <div style={{ fontSize: 10.5, color: C.muted }}>Phase {runWeekNow.ph} · {RUN_PHASES[runWeekNow.ph].name}</div>
+              </div>
+              {RUN_SLOTS.map((s) => {
+                const isToday = runWkIdx >= 0 && s.dow === todayDow;
+                const txt = runWeekNow[s.key];
+                const done = runWkIdx >= 0 && runs.some((r) => r.date >= currentWeekMonday && r.date <= currentWeekSunday && new Date(r.date + "T00:00:00").getDay() === s.dow);
+                return (
+                  <div key={s.key} style={{ borderTop: `1px solid ${C.cardBorder}`, padding: "8px 0", background: isToday ? C.blueSoft : "transparent", margin: isToday ? "0 -8px" : 0, paddingLeft: isToday ? 8 : 0, paddingRight: isToday ? 8 : 0, borderRadius: isToday ? 6 : 0 }}>
+                    <div className="flex items-center justify-between">
+                      <div style={{ fontSize: 10.5, color: C[s.color], fontWeight: 800, letterSpacing: "0.04em" }}>{s.label} · {s.tag.toUpperCase()}{isToday ? " · TODAY" : ""}</div>
+                      {done && <div style={{ fontSize: 11, color: C.green, fontWeight: 800 }}>✓ logged</div>}
+                    </div>
+                    <div style={{ fontSize: 12.5, lineHeight: 1.5, marginTop: 2, fontWeight: /TRIAL|ATTEMPT/.test(txt) ? 800 : 400 }}>{txt}</div>
+                    {sessionKinds(resolveSessionText(runWeekNow, s.key), s.key).map((k) => <GuideChip key={k} kind={k} ph={runWeekNow.ph} wk={runWeekNow.wk} compact={!isToday} />)}
                   </div>
-                  <div style={{ fontSize: 11.5, color: C.muted }}>{fmtShort(w.start)} – {fmtShort(w.end)}</div>
-                </div>
-                <div style={{ borderTop: `1px solid ${C.cardBorder}`, paddingTop: 8 }}>
-                  <div style={{ fontSize: 10.5, color: C.blue, fontWeight: 800, letterSpacing: "0.04em" }}>WEDNESDAY</div>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.5, marginTop: 2 }}>{w.wed}</div>
-                </div>
-                <div style={{ borderTop: `1px solid ${C.cardBorder}`, paddingTop: 8, marginTop: 8 }}>
-                  <div style={{ fontSize: 10.5, color: C.blue, fontWeight: 800, letterSpacing: "0.04em" }}>SATURDAY</div>
-                  <div style={{ fontSize: 12.5, lineHeight: 1.5, marginTop: 2 }}>{w.sat}</div>
-                </div>
-                <div style={{ fontSize: 11.5, color: C.muted, marginTop: 8, fontStyle: "italic" }}>{w.goal}</div>
-              </Card>
-            );
-          })}
+                );
+              })}
+              {runWeekNow.note && <div style={{ fontSize: 11.5, color: C.muted, marginTop: 6, fontStyle: "italic" }}>{runWeekNow.note}</div>}
+              <div style={{ fontSize: 11, color: C.muted, marginTop: 6 }}>+ 5 min brisk walk before and after every run.</div>
+            </Card>
+          )}
 
-          <Eyebrow>Obstacle plan — sorted by grip demand</Eyebrow>
-          {OBSTACLES.map((group) => {
-            const isOpen = openTier === group.tier;
-            return (
-              <div key={group.tier} style={{ background: C.card, border: `1px solid ${group.color}`, borderRadius: 14, overflow: "hidden" }}>
-                <button onClick={() => setOpenTier(isOpen ? null : group.tier)} className="w-full flex items-center justify-between" style={{ padding: "12px 16px" }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: group.color, textAlign: "left", letterSpacing: "0.02em" }}>{group.title}</div>
-                  {isOpen ? <ChevronUp size={16} color={C.muted} /> : <ChevronDown size={16} color={C.muted} />}
-                </button>
-                {isOpen && (
-                  <div style={{ padding: "0 16px 14px" }}>
-                    {group.items.map((o) => (
-                      <div key={o.name} style={{ padding: "9px 0", borderTop: `1px solid ${C.cardBorder}` }}>
-                        <div style={{ fontSize: 13, fontWeight: 700 }}>{o.name}</div>
-                        <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.5, marginTop: 2 }}>{o.how}</div>
+          {/* Log a run */}
+          <Card accent={C.green}>
+            <Eyebrow color={C.green}>Log a run (copy from COROS)</Eyebrow>
+            {runMsg && <div className="px-3 py-2 mb-2" style={{ background: C.greenSoft, border: `1px solid ${C.green}`, borderRadius: 8, fontSize: 12.5, color: "#B7E0C6" }}>{runMsg}</div>}
+            {(() => {
+              const inp = { background: C.bg, border: `1px solid ${C.cardBorder}`, borderRadius: 8, padding: "9px 10px", fontSize: 14, color: C.text, width: "100%" };
+              const lbl = { fontSize: 10.5, color: C.muted, marginBottom: 3, display: "block" };
+              const kmN = parseFloat(runForm.km), secsN = parseDuration(runForm.time);
+              return (
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <label style={{ flex: 1 }}><span style={lbl}>Date</span>
+                      <input type="date" value={runForm.date} onChange={(e) => setRunForm({ ...runForm, date: e.target.value })} style={inp} /></label>
+                    <label style={{ flex: 1 }}><span style={lbl}>Session</span>
+                      <select value={runForm.type || defaultRunType(runForm.date || todayISO())} onChange={(e) => setRunForm({ ...runForm, type: e.target.value })} style={inp}>
+                        {RUN_SESSION_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                      </select></label>
+                  </div>
+                  <div className="flex gap-2">
+                    <label style={{ flex: 1 }}><span style={lbl}>Distance (km)</span>
+                      <input inputMode="decimal" placeholder="3.28" value={runForm.km} onChange={(e) => setRunForm({ ...runForm, km: e.target.value.replace(/[^0-9.]/g, "") })} style={inp} /></label>
+                    <label style={{ flex: 1 }}><span style={lbl}>Time (mm:ss)</span>
+                      <input inputMode="numeric" placeholder="40:50" value={runForm.time} onChange={(e) => setRunForm({ ...runForm, time: e.target.value.replace(/[^0-9:]/g, "") })} style={inp} /></label>
+                  </div>
+                  <div className="flex gap-2">
+                    <label style={{ flex: 1 }}><span style={lbl}>Avg HR (optional)</span>
+                      <input inputMode="numeric" placeholder="150" value={runForm.hr} onChange={(e) => setRunForm({ ...runForm, hr: e.target.value.replace(/[^0-9]/g, "") })} style={inp} /></label>
+                    <label style={{ flex: 1 }}><span style={lbl}>Effort 1–10 (optional)</span>
+                      <input inputMode="numeric" placeholder="4" value={runForm.rpe} onChange={(e) => setRunForm({ ...runForm, rpe: e.target.value.replace(/[^0-9]/g, "").slice(0, 2) })} style={inp} /></label>
+                  </div>
+                  <label><span style={lbl}>How it felt (optional)</span>
+                    <input placeholder="e.g. left shin a bit tight" value={runForm.notes} onChange={(e) => setRunForm({ ...runForm, notes: e.target.value })} style={inp} /></label>
+                  <div className="flex items-center justify-between" style={{ marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: C.muted }}>Pace: <b style={{ color: C.text }}>{kmN > 0 && secsN ? fmtPace(secsN, kmN) : "–"}</b></div>
+                    <button onClick={saveRun} disabled={savingRun} style={{ background: C.green, color: "#12151A", fontWeight: 800, fontSize: 13, borderRadius: 8, padding: "9px 18px", opacity: savingRun ? 0.6 : 1 }}>
+                      {savingRun ? "Saving…" : "Save run"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+          </Card>
+
+          {/* Run history */}
+          <div>
+            <Eyebrow>Run history</Eyebrow>
+            {runs.length === 0 && <div style={{ fontSize: 12.5, color: C.muted }}>No runs logged yet. Your first one is Monday.</div>}
+            <div className="flex flex-col gap-2">
+              {runs.map((r) => {
+                const big = r.type === "Time trial";
+                return (
+                  <div key={r.id} style={{ background: C.card, border: `1px solid ${big ? C.amber : C.cardBorder}`, borderRadius: 12, padding: "10px 14px" }}>
+                    <div className="flex items-center justify-between">
+                      <div style={{ fontSize: 12.5, fontWeight: 700 }}>{fmtShort(r.date)} · <span style={{ color: big ? C.amber : C.muted, fontWeight: 600 }}>{r.type}</span></div>
+                      <button onClick={() => deleteRun(r.id)} style={{ color: C.muted, padding: 2 }} aria-label="Delete run"><X size={12} /></button>
+                    </div>
+                    <div style={{ fontSize: 13, marginTop: 3 }}>
+                      <b>{r.km} km</b> · {fmtDuration(r.secs)} · <b style={{ color: C.blue }}>{fmtPace(r.secs, r.km)}</b>
+                      {r.hr ? <span style={{ color: C.muted }}> · {r.hr} bpm</span> : null}
+                      {r.rpe ? <span style={{ color: C.muted }}> · effort {r.rpe}</span> : null}
+                    </div>
+                    {r.hr && EASY_TYPES.includes(r.type) && (
+                      <div style={{ fontSize: 11, marginTop: 3, fontWeight: 700, color: r.hr > 150 ? C.danger : C.green }}>
+                        {r.hr > 150 ? `⚠ Avg HR ${r.hr} — too fast for an easy day. Aim 120–145 next time.` : "✓ HR in the easy range — nice."}
                       </div>
+                    )}
+                    {r.notes && <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{r.notes}</div>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Speed guide */}
+          <div style={{ background: C.card, border: `1px solid ${C.amber}`, borderRadius: 14, overflow: "hidden" }}>
+            <button onClick={() => setShowSpeedGuide(!showSpeedGuide)} className="w-full flex items-center justify-between" style={{ padding: "12px 16px" }}>
+              <div style={{ textAlign: "left" }}>
+                <div style={{ fontSize: 12.5, fontWeight: 800, color: C.amber }}>🎯 Speed guide — how fast should I go?</div>
+                <div style={{ fontSize: 11, color: C.muted, marginTop: 1 }}>Heart rate is the main guide. Pace is a rough hint.</div>
+              </div>
+              {showSpeedGuide ? <ChevronUp size={16} color={C.muted} /> : <ChevronDown size={16} color={C.muted} />}
+            </button>
+            {showSpeedGuide && (
+              <div style={{ padding: "0 16px 14px" }}>
+                <div style={{ fontSize: 12, lineHeight: 1.5, padding: "8px 10px", background: C.amberSoft, borderRadius: 8, marginBottom: 10 }}>
+                  <b>The one rule:</b> ~80% of your running is EASY (HR 120–145). Only Monday from Week 10 is fast. Most beginners run every day too fast, stay tired, and never get quicker.
+                </div>
+                {Object.entries(SPEED_GUIDE).map(([k, g]) => {
+                  const ph = runWeekNow.ph, wk = runWeekNow.wk, col = C[g.color] || C.text;
+                  return (
+                    <div key={k} style={{ padding: "9px 0", borderTop: `1px solid ${C.cardBorder}` }}>
+                      <div className="flex items-center justify-between">
+                        <div style={{ fontSize: 13, fontWeight: 800, color: col }}>{g.name}</div>
+                        <div style={{ fontSize: 10.5, color: C.muted }}>{g.zone}</div>
+                      </div>
+                      <div style={{ fontSize: 12, marginTop: 3 }}>❤️ <b>{g.hr}</b></div>
+                      <div style={{ fontSize: 12, marginTop: 1 }}>⏱ {g.pace(ph, wk)}</div>
+                      <div style={{ fontSize: 11.5, color: C.muted, lineHeight: 1.45, marginTop: 3 }}>{g.feel}</div>
+                      <div style={{ fontSize: 11.5, color: C.text, lineHeight: 1.45, marginTop: 2 }}>→ {g.cue}</div>
+                    </div>
+                  );
+                })}
+                <div style={{ borderTop: `1px solid ${C.cardBorder}`, paddingTop: 9, marginTop: 2 }}>
+                  <div style={{ fontSize: 11, color: C.muted, marginBottom: 5 }}>Your COROS zones (max HR {RUN_HR_MAX})</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {COROS_ZONES.map((z) => (
+                      <div key={z.name} style={{ fontSize: 10.5, border: `1px solid ${z.color}`, color: z.color, borderRadius: 6, padding: "3px 7px" }}>{z.name} {z.range}</div>
                     ))}
                   </div>
-                )}
+                  <div style={{ fontSize: 11, color: C.muted, lineHeight: 1.45, marginTop: 8 }}>
+                    Easy-pace ranges move each phase (now: {EASY_PACE_BY_PHASE[runWeekNow.ph]}/km). In Biñan heat your HR runs higher at the same pace — on hot days just go by HR. Wrist HR can spike in the first few minutes; judge it after minute 5.
+                  </div>
+                </div>
               </div>
-            );
-          })}
+            )}
+          </div>
 
-          <Card accent={C.amber}>
-            <Eyebrow color={C.amber}>Burpee budget</Eyebrow>
-            <div style={{ fontSize: 12.5, lineHeight: 1.55 }}>
-              4 heavy-grip obstacles × 30 burpees = <b>120 burpees</b>, on top of 5 km. That's why the Friday burpee ladder isn't optional — train for 150 and race day feels manageable.
-              <br /><br />
-              Also worth knowing: <b>you can walk the whole course.</b> There's no pace requirement in an open-heat Spartan Sprint. The only real enemy is quitting.
+          {/* Rules */}
+          <div style={{ background: C.card, border: `1px solid ${C.cardBorder}`, borderRadius: 14, overflow: "hidden" }}>
+            <button onClick={() => setShowRunRules(!showRunRules)} className="w-full flex items-center justify-between" style={{ padding: "12px 16px" }}>
+              <div style={{ fontSize: 12.5, fontWeight: 800 }}>Beginner rules — read once</div>
+              {showRunRules ? <ChevronUp size={16} color={C.muted} /> : <ChevronDown size={16} color={C.muted} />}
+            </button>
+            {showRunRules && (
+              <div style={{ padding: "0 16px 12px" }}>
+                {RUN_RULES.map(([k, v]) => (
+                  <div key={k} style={{ padding: "8px 0", borderTop: `1px solid ${C.cardBorder}` }}>
+                    <div style={{ fontSize: 12.5, fontWeight: 700 }}>{k}</div>
+                    <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.45, marginTop: 2 }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Full plan */}
+          <div>
+            <Eyebrow>All 26 weeks</Eyebrow>
+            <div className="flex flex-col gap-2">
+              {RUN_WEEKS.map((w, i) => {
+                const startIso = (() => { const d = new Date(RUN_START + "T00:00:00"); d.setDate(d.getDate() + i * 7); return d.toISOString().slice(0, 10); })();
+                const isCurrent = i === runWkIdx;
+                const isPast = runWkIdx > i;
+                const isOpen = openRunWeek === null ? isCurrent : openRunWeek === w.wk;
+                const accent = isCurrent ? C.blue : w.tt ? C.amber : C.cardBorder;
+                const showPhase = i === 0 || RUN_WEEKS[i - 1].ph !== w.ph;
+                return (
+                  <React.Fragment key={w.wk}>
+                    {showPhase && (
+                      <div style={{ fontSize: 11, color: C.amber, fontWeight: 800, marginTop: i === 0 ? 0 : 8, letterSpacing: "0.03em" }}>
+                        PHASE {w.ph} · {RUN_PHASES[w.ph].name.toUpperCase()}
+                        <div style={{ fontSize: 11, color: C.muted, fontWeight: 400, letterSpacing: 0, marginTop: 1 }}>{RUN_PHASES[w.ph].note}</div>
+                      </div>
+                    )}
+                    <div style={{ background: C.card, border: `1px solid ${accent}`, borderRadius: 12, overflow: "hidden", opacity: isPast && !isOpen ? 0.6 : 1 }}>
+                      <button onClick={() => setOpenRunWeek(isOpen ? -1 : w.wk)} className="w-full flex items-center justify-between" style={{ padding: "10px 14px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 800, textAlign: "left" }}>
+                          Week {w.wk}
+                          {isCurrent && <span style={{ marginLeft: 8, fontSize: 9.5, color: C.blue, fontWeight: 800 }}>THIS WEEK</span>}
+                          {w.tt && <span style={{ marginLeft: 8, fontSize: 9.5, color: C.amber, fontWeight: 800 }}>{w.wk === 26 ? "RACE" : "TIME TRIAL"}</span>}
+                          {w.light && <span style={{ marginLeft: 8, fontSize: 9.5, color: C.green, fontWeight: 800 }}>LIGHT</span>}
+                        </div>
+                        <div className="flex items-center gap-2"><span style={{ fontSize: 11, color: C.muted }}>{fmtShort(startIso)}</span>{isOpen ? <ChevronUp size={14} color={C.muted} /> : <ChevronDown size={14} color={C.muted} />}</div>
+                      </button>
+                      {isOpen && (
+                        <div style={{ padding: "0 14px 10px" }}>
+                          {RUN_SLOTS.map((s) => (
+                            <div key={s.key} style={{ borderTop: `1px solid ${C.cardBorder}`, padding: "6px 0" }}>
+                              <div style={{ fontSize: 10, color: C[s.color], fontWeight: 800, letterSpacing: "0.04em" }}>{s.label}</div>
+                              <div style={{ fontSize: 12.5, lineHeight: 1.45 }}>{w[s.key]}</div>
+                              {sessionKinds(resolveSessionText(w, s.key), s.key).map((k) => <GuideChip key={k} kind={k} ph={w.ph} wk={w.wk} compact />)}
+                            </div>
+                          ))}
+                          {w.note && <div style={{ fontSize: 11.5, color: C.muted, marginTop: 4, fontStyle: "italic" }}>{w.note}</div>}
+                        </div>
+                      )}
+                    </div>
+                  </React.Fragment>
+                );
+              })}
             </div>
+          </div>
+
+          {/* Pace cheat sheet */}
+          <Card>
+            <Eyebrow>Pace cheat sheet · 6:00/km = sub-30</Eyebrow>
+            {[[390, "Tempo"], [375, "Tempo"], [360, "Race pace"], [355, "Fast reps"], [345, "Fast reps"]].map(([p, use]) => (
+              <div key={p} className="flex items-center justify-between py-1.5" style={{ borderTop: `1px solid ${C.cardBorder}`, fontSize: 12.5, fontWeight: p === 360 ? 800 : 400, color: p === 360 ? C.amber : C.text }}>
+                <span style={{ width: 70 }}>{fmtDuration(p)}/km</span>
+                <span style={{ color: C.muted, flex: 1 }}>{use}</span>
+                <span>400 m {fmtDuration(p * 0.4)}</span>
+                <span style={{ width: 78, textAlign: "right" }}>5K {fmtDuration(p * 5)}</span>
+              </div>
+            ))}
           </Card>
 
           <div style={{ background: C.dangerSoft, border: `1px solid ${C.danger}`, borderRadius: 12, padding: "12px 14px", fontSize: 11.5, color: "#E8B79C", lineHeight: 1.5 }}>
