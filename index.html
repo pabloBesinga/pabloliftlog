@@ -98,7 +98,7 @@ const C = {
   dangerSoft: "#2A1D18",
 };
 
-// ============================ PLAN DATA (v8.3 PPLUL + Run — 8 Nov 2026 · scan data 29 Sep) ============================
+// ============================ PLAN DATA (v8.4 PPLUL + Run — 9 Nov 2026 · scan data 29 Sep) ============================
 
 const RUN_DAY_INDEXES = []; // v8: no scheduled runs (race off) — use the Run day toggle manually if you do a long run
 const LEGACY_DAY_NAMES = { UpperA: "Upper A", LowerA: "Lower A", UpperB: "Upper B", LowerB: "Lower B" }; // pre-v8 sessions
@@ -365,24 +365,24 @@ const RUN_SLOTS = [
   { key: "sun", dow: 0, label: "SUNDAY", tag: "Long & slow", color: "green" },
 ];
 const RUN_PHASES = {
-  1: { name: "Run/walk base", note: "Walking is the plan. Every run is talking pace." },
-  2: { name: "Continuous running", note: "Build to 30 min non-stop. Monday adds strides from Week 10." },
+  1: { name: "Run/walk base", note: "Mon: short controlled reps (6:30–7:00/km). Thu/Sun: jog/walk, HR under 150." },
+  2: { name: "Continuous running", note: "Mon reps get longer. Thu/Sun build to 30 min non-stop, HR under 150." },
   3: { name: "Get faster", note: "Monday becomes race-pace intervals. Thu and Sun stay easy." },
   4: { name: "Race-specific", note: "Longer race-pace reps, then taper into the attempt." },
 };
 const RUN_WEEKS = [
-  { wk: 1, ph: 1, mon: "8 × (run 1 min / walk 2 min)", thu: "Same as Monday", sun: "Same as Monday", note: "Total ~24 min. Slow enough to talk." },
-  { wk: 2, ph: 1, mon: "8 × (run 1:30 / walk 2 min)", thu: "Same as Monday", sun: "Same as Monday" },
-  { wk: 3, ph: 1, mon: "6 × (run 2 min / walk 1:30)", thu: "Same as Monday", sun: "Same as Monday" },
-  { wk: 4, ph: 1, mon: "Repeat Week 3", thu: "Repeat Week 3", sun: "Repeat Week 3", note: "Consolidation week. Let your shins and calves catch up." },
-  { wk: 5, ph: 1, mon: "5 × (run 3 min / walk 1:30)", thu: "5 × (run 3 / walk 1:30)", sun: "6 × (run 3 / walk 1:30)" },
-  { wk: 6, ph: 1, mon: "4 × (run 5 min / walk 1:30)", thu: "4 × (run 5 / walk 1:30)", sun: "4 × (run 5 / walk 1:30)", note: "Last run/walk week." },
-  { wk: 7, ph: 2, mon: "2 × (run 10 min / walk 1:30)", thu: "2 × (run 8 / walk 1:30)", sun: "2 × (run 12 / walk 1:30)", note: "Christmas week — any order is fine." },
-  { wk: 8, ph: 2, mon: "2 × (run 10 min / walk 1:30)", thu: "15 min continuous", sun: "2 × (run 12 / walk 1:30)", note: "New Year week. Consolidation." },
-  { wk: 9, ph: 2, mon: "20 min continuous", thu: "15 min", sun: "22 min", note: "First 20 min without walking. Huge milestone." },
-  { wk: 10, ph: 2, mon: "20 min + 4 × 15 s strides", thu: "18 min", sun: "25 min", note: "Strides: smooth, quick, ~80% effort, walk back between." },
-  { wk: 11, ph: 2, mon: "22 min + 6 × 15 s strides", thu: "20 min", sun: "28 min" },
-  { wk: 12, ph: 2, mon: "20 min + 4 strides", thu: "15 min", sun: "5K TIME TRIAL #1", note: "Benchmark. Run/walk allowed. Expect ~35–38 min. Log it.", tt: true },
+  { wk: 1, ph: 1, mon: "8 × 1 min @ 6:30–7:00/km, 2 min walk between", thu: "8 × (jog 1 min / walk 2 min)", sun: "8 × (jog 1 min / walk 2 min)", note: "Mon: hard but controlled — not a sprint. Thu/Sun: ~24 min, slow enough to talk." },
+  { wk: 2, ph: 1, mon: "8 × 1 min @ 6:30–7:00/km, 2 min walk", thu: "8 × (jog 1:30 / walk 2 min)", sun: "8 × (jog 1:30 / walk 2 min)" },
+  { wk: 3, ph: 1, mon: "10 × 1 min @ 6:30–7:00/km, 1:30 walk", thu: "6 × (jog 2 min / walk 1:30)", sun: "6 × (jog 2 min / walk 1:30)" },
+  { wk: 4, ph: 1, mon: "6 × 1 min @ 6:30–7:00/km, 2 min walk", thu: "Repeat Week 3", sun: "Repeat Week 3", note: "Lighter week. Let your shins and calves catch up." },
+  { wk: 5, ph: 1, mon: "6 × 2 min @ 6:45–7:00/km, 2 min walk", thu: "5 × (run 3 / walk 1:30)", sun: "6 × (run 3 / walk 1:30)" },
+  { wk: 6, ph: 1, mon: "5 × 3 min @ ~7:00/km, 2 min walk", thu: "4 × (run 5 / walk 1:30)", sun: "4 × (run 5 / walk 1:30)", note: "Last run/walk week." },
+  { wk: 7, ph: 2, mon: "4 × 4 min @ ~7:00/km, 2 min walk", thu: "2 × (run 8 / walk 1:30)", sun: "2 × (run 12 / walk 1:30)", note: "Christmas week — any order is fine." },
+  { wk: 8, ph: 2, mon: "6 × 1 min @ 6:30–7:00/km, 2 min walk", thu: "15 min continuous", sun: "2 × (run 12 / walk 1:30)", note: "New Year week. Lighter." },
+  { wk: 9, ph: 2, mon: "5 × 3 min @ ~6:45/km, 2 min walk", thu: "15 min", sun: "22 min", note: "First 20 min without walking. Huge milestone." },
+  { wk: 10, ph: 2, mon: "6 × 2 min @ ~6:30/km, 2 min walk", thu: "18 min", sun: "25 min" },
+  { wk: 11, ph: 2, mon: "4 × 4 min @ ~6:45/km, 2 min walk", thu: "20 min", sun: "28 min" },
+  { wk: 12, ph: 2, mon: "15 min easy + 4 strides", thu: "15 min", sun: "5K TIME TRIAL #1", note: "Benchmark. Run/walk allowed. Expect ~35–38 min. Log it.", tt: true },
   { wk: 13, ph: 3, mon: "6 × 400 m @ 6:00/km, 2 min walk between", thu: "20 min", sun: "30 min", note: "400 m at 6:00/km = 2:24. This is race pace — learn how it feels." },
   { wk: 14, ph: 3, mon: "8 × 400 m @ 6:00/km, 2 min walk", thu: "22 min", sun: "32 min" },
   { wk: 15, ph: 3, mon: "5 × 600 m @ 6:00/km, 2 min walk", thu: "25 min", sun: "35 min", note: "600 m = 3:36." },
@@ -401,7 +401,9 @@ const RUN_WEEKS = [
 const RUN_RULES = [
   ["Every run", "5 min brisk walk before, 5 min walk after. Not counted in the session times."],
   ["Easy means easy", "Thursday, Sunday and all of Phase 1–2: you can speak full sentences. If not, slow down or walk. Ignore pace on easy days — 8:00–9:00/km at first is normal."],
-  ["Only Monday is fast", "Strides from Week 10, intervals from Week 13. That's the only session where pace matters. Can't hit the pace? Run it hard-but-controlled and repeat the week."],
+  ["Monday is the one hard day", "Intervals every Monday. Weeks 1–12: reps at 6:30–7:00/km, hard but controlled — never faster than 6:00/km. 6:00/km work starts Week 13. Can't hit the pace? Run it hard-but-controlled and repeat the week."],
+  ["Thu & Sun: HR under 150", "Every time, no exceptions. The faster your Mondays get, the more the slow days matter — they're what lets you recover for the next one."],
+  ["Sore-shin swap", "Shins or calves sore on Monday morning → that Monday becomes an easy run instead."],
   ["Repeat, don't skip", "If a week feels too hard, do it again. Skipping ahead is how beginners get shin splints."],
   ["Pain rule", "Soreness is fine. Sharp or one-sided pain in shin, knee, foot or Achilles, or pain that worsens while running → stop, walk home, 2–3 days off running (lifting is fine), restart at the previous week."],
   ["Lifting comes first", "Run Monday after Push, or at a separate time. If Wed or Sat leg lifts drop two sessions in a row, make that week's Sunday run a walk."],
@@ -435,8 +437,8 @@ const SPEED_GUIDE = {
     pace: () => "~5:30–6:00/km feel", feel: "Fast and smooth, ~80% effort. Relaxed face, quick feet. Not a sprint.",
     cue: "Do them at the END of the easy run. Walk back fully between each one." },
   intervals: { name: "Intervals", color: "amber", hr: "Climbs to 155–174 by the last reps", zone: "Threshold",
-    pace: () => "The pace written in the session (e.g. @ 6:00/km)", feel: "Hard but controlled. You can say a few words, not a sentence. Last rep should feel like you had one more in you.",
-    cue: "Watch PACE, not HR — HR lags on short reps. Walk recoveries fully. Can't hold the pace? Finish at hard-but-controlled and repeat the week." },
+    pace: (ph, wk) => wk <= 12 ? "6:30–7:00/km (as written) — never faster than 6:00" : "The pace written in the session", feel: "Hard but controlled. You can say a few words, not a sentence. Last rep should feel like you had one more in you.",
+    cue: "Watch PACE, not HR — HR lags on short reps. Weeks 1–12: never faster than 6:00/km (today's 178 peak was too hot — aim to top out ~170). Walk recoveries fully. Warm up with 10 min walk/jog first." },
   tempo: { name: "Tempo", color: "amber", hr: "~155–170 bpm", zone: "Threshold",
     pace: () => "The pace written in the session (6:15–6:30/km)", feel: "Comfortably hard. Short phrases only. Steady the whole way — not getting faster.",
     cue: "First 2 min will feel easy — don't speed up. If HR goes over 172, ease off a bit." },
@@ -449,8 +451,8 @@ function sessionKinds(text, slotKey) { // what a session's text asks for → gui
   const t = String(text || "");
   if (/TRIAL|ATTEMPT/.test(t)) return ["timetrial"];
   if (/tempo/i.test(t) || /×\s*8 min @/.test(t)) return ["tempo"];
-  if (/\d\s*(m|km) @/.test(t)) return ["intervals"];
-  const base = /walk/.test(t) && /run/.test(t) ? "runwalk" : slotKey === "sun" ? "long" : "easy";
+  if (/\d\s*(m|km|min) @/.test(t)) return ["intervals"];
+  const base = /walk/.test(t) && /(run|jog)/.test(t) ? "runwalk" : slotKey === "sun" ? "long" : "easy";
   return /strides/.test(t) ? [base, "strides"] : [base];
 }
 function resolveSessionText(week, slotKey) { // "Same as Monday" / "Repeat Week 3" → the real session
@@ -1161,7 +1163,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
       <div className="px-5 pt-6 pb-3" style={{ borderBottom: `1px solid ${C.cardBorder}` }}>
         <div className="flex items-baseline justify-between">
           <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Lift Log</div>
-          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.3.2 · PPLUL + RUN</div>
+          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.4 · PPLUL + RUN</div>
         </div>
         <div style={{ fontSize: 12, color: C.muted, marginTop: 2, marginBottom: 12 }}>
           {view === "log" ? "Log today's sets"
@@ -1730,7 +1732,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
             {showSpeedGuide && (
               <div style={{ padding: "0 16px 14px" }}>
                 <div style={{ fontSize: 12, lineHeight: 1.5, padding: "8px 10px", background: C.amberSoft, borderRadius: 8, marginBottom: 10 }}>
-                  <b>The one rule:</b> ~80% of your running is EASY (HR 120–145). Only Monday from Week 10 is fast. Most beginners run every day too fast, stay tired, and never get quicker.
+                  <b>The one rule:</b> Monday is your one hard day. Thursday and Sunday are EASY — HR under 150, every time. Most beginners run every day too fast, stay tired, and never get quicker.
                 </div>
                 {Object.entries(SPEED_GUIDE).map(([k, g]) => {
                   const ph = runWeekNow.ph, wk = runWeekNow.wk, col = C[g.color] || C.text;
@@ -1831,7 +1833,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
           {/* Pace cheat sheet */}
           <Card>
             <Eyebrow>Pace cheat sheet · 6:00/km = sub-30</Eyebrow>
-            {[[390, "Tempo"], [375, "Tempo"], [360, "Race pace"], [355, "Fast reps"], [345, "Fast reps"]].map(([p, use]) => (
+            {[[420, "Mon reps wk 1–12"], [405, "Mon reps wk 1–12"], [390, "Tempo / reps"], [375, "Tempo"], [360, "Race pace"], [355, "Fast reps"], [345, "Fast reps"]].map(([p, use]) => (
               <div key={p} className="flex items-center justify-between py-1.5" style={{ borderTop: `1px solid ${C.cardBorder}`, fontSize: 12.5, fontWeight: p === 360 ? 800 : 400, color: p === 360 ? C.amber : C.text }}>
                 <span style={{ width: 70 }}>{fmtDuration(p)}/km</span>
                 <span style={{ color: C.muted, flex: 1 }}>{use}</span>
