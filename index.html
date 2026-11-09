@@ -461,6 +461,16 @@ function resolveSessionText(week, slotKey) { // "Same as Monday" / "Repeat Week 
   return t;
 }
 const EASY_TYPES = ["Easy (Thu)", "Long (Sun)"];
+// Full week: lifting + runs (getDay order handled in WeekStrip)
+const WEEK_PLAN = [
+  { dow: 1, d: "Mon", lift: "Push", run: "mon" },
+  { dow: 2, d: "Tue", lift: "Pull", run: null },
+  { dow: 3, d: "Wed", lift: "Legs", run: null },
+  { dow: 4, d: "Thu", lift: null, run: "thu" },
+  { dow: 5, d: "Fri", lift: "Upper", run: null },
+  { dow: 6, d: "Sat", lift: "Lower", run: null },
+  { dow: 0, d: "Sun", lift: null, run: "sun" },
+];
 
 function runWeekIndex(iso) {
   const d = daysBetween(RUN_START, iso);
@@ -1100,6 +1110,36 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
     </div>
   );
 
+  const WeekStrip = ({ onPickLift }) => {
+    const started = runWkIdx >= 0 && !runPlanDone;
+    return (
+      <div>
+        <div className="flex gap-1">
+          {WEEK_PLAN.map((x) => {
+            const isToday = x.dow === todayDow;
+            const slot = RUN_SLOTS.find((s) => s.key === x.run);
+            const runDone = x.run && started && runs.some((r) => r.date >= currentWeekMonday && r.date <= currentWeekSunday && new Date(r.date + "T00:00:00").getDay() === x.dow);
+            return (
+              <button key={x.d} onClick={() => x.lift && onPickLift && onPickLift(x.lift)} style={{
+                flex: 1, minWidth: 0, borderRadius: 9, padding: "6px 1px 5px", textAlign: "center",
+                border: `1px solid ${isToday ? C.amber : C.cardBorder}`, background: isToday ? C.amberSoft : C.card,
+              }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: isToday ? C.amber : C.muted }}>{x.d}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: x.lift ? C.text : C.muted, marginTop: 2 }}>{x.lift || "Rest"}</div>
+                <div style={{ fontSize: 9.5, fontWeight: 800, marginTop: 3, color: x.run ? (runDone ? C.green : C[slot.color]) : "transparent" }}>
+                  {x.run ? (runDone ? "✓ run" : "🏃 " + slot.tag.split(" ")[0]) : "·"}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <div style={{ fontSize: 10.5, color: C.muted, marginTop: 5, lineHeight: 1.4 }}>
+          🏃 Run days: <b style={{ color: C.amber }}>Mon</b> key (after Push) · <b style={{ color: C.blue }}>Thu</b> easy · <b style={{ color: C.green }}>Sun</b> long &amp; slow. No runs Tue/Wed/Fri/Sat.
+        </div>
+      </div>
+    );
+  };
+
   const GuideChip = ({ kind, ph, wk, compact }) => {
     const g = SPEED_GUIDE[kind];
     const col = C[g.color] || C.text;
@@ -1121,7 +1161,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
       <div className="px-5 pt-6 pb-3" style={{ borderBottom: `1px solid ${C.cardBorder}` }}>
         <div className="flex items-baseline justify-between">
           <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em" }}>Lift Log</div>
-          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.3.1 · PPLUL + RUN</div>
+          <div style={{ fontSize: 10, color: C.amber, fontWeight: 700, letterSpacing: "0.04em" }}>PLAN v8.3.2 · PPLUL + RUN</div>
         </div>
         <div style={{ fontSize: 12, color: C.muted, marginTop: 2, marginBottom: 12 }}>
           {view === "log" ? "Log today's sets"
@@ -1153,6 +1193,10 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
         <div className="px-5 py-10 text-center" style={{ color: C.muted, fontSize: 13 }}>Loading your data…</div>
       ) : view === "log" ? (
         <>
+          <div className="px-5 pt-4">
+            <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 6 }}>Your week</div>
+            <WeekStrip onPickLift={(d) => setDay(d)} />
+          </div>
           <div className="flex gap-1.5 px-5 pt-4">
             {Object.keys(DAYS).map((d) => (
               <button key={d} onClick={() => setDay(d)} style={{
@@ -1580,6 +1624,7 @@ After you have the real numbers, respond with ONLY a raw JSON object as your fin
                 </div>
                 <div style={{ fontSize: 10.5, color: C.muted }}>Phase {runWeekNow.ph} · {RUN_PHASES[runWeekNow.ph].name}</div>
               </div>
+              <div style={{ marginBottom: 8 }}><WeekStrip onPickLift={(d) => { setDay(d); setView("log"); }} /></div>
               {RUN_SLOTS.map((s) => {
                 const isToday = runWkIdx >= 0 && s.dow === todayDow;
                 const txt = runWeekNow[s.key];
